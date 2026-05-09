@@ -1,19 +1,31 @@
 import {
-    IsDecimal,
-    IsNotEmpty,
-    IsNumber,
-    IsUUID,
-    Min,
-    min,
-} from 'class-validator';
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { IsDecimal, IsNotEmpty, IsNumber, IsUUID, Min } from 'class-validator';
 
 export class CreateProdutoDto {
-    @IsNotEmpty({ message: 'nome é obrigatório' })
-    nome?: string;
-    @IsNumber()
-    @Min(0)
-    preco?: number;
+  @ApiProperty({
+    description: 'Nome do produto',
+    example: 'Casaco Volcom Stone',
+  })
+  @IsNotEmpty({ message: 'nome é obrigatório' })
+  nome?: string;
 
-    @IsNumber()
-    categoriaId?: number;
+  @ApiProperty({
+    description: 'Preço do produto',
+    example: 4999.9,
+  })
+  @IsNumber()
+  @Min(0)
+  preco?: number;
+
+  @ApiProperty({
+    description: 'ID da categoria do produto',
+    example: 1,
+  })
+  @IsNumber()
+  categoriaId?: number;
 }

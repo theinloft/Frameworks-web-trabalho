@@ -16,20 +16,17 @@ export class ProdutoService {
     private readonly categoriaRepo: Repository<Categoria>,
   ) {}
 
+  async create(dto: CreateProdutoDto) {
+    const produto = this.produtoRepo.create({
+      nome: dto.nome,
+      preco: dto.preco,
+      categoria: {
+        id: dto.categoriaId,
+      },
+    });
 
-
-async create(dto: CreateProdutoDto) {
-
-  const produto = this.produtoRepo.create({
-    nome: dto.nome,
-    preco: dto.preco,
-    categoria: {
-      id: dto.categoriaId,
-    } as any,
-  });
-
-  return this.produtoRepo.save(produto);
-}
+    return this.produtoRepo.save(produto);
+  }
 
   async findAll() {
     return this.produtoRepo.find();

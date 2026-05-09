@@ -11,12 +11,28 @@ import { ProdutoService } from './produto.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produto } from './entities/produto.entity';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('produto')
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Criar produto',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Criado',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro de validação',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Não autorizado',
+  })
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtoService.create(createProdutoDto);
   }

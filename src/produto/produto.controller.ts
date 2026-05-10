@@ -38,21 +38,61 @@ export class ProdutoController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Listar produtos',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+  })
   findAll() {
     return this.produtoService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Obter produto pelo ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não encontrado',
+  })
   findOne(@Param('id') id: string) {
     return this.produtoService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Atualizar produto',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não encontrado',
+  })
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtoService.update(id, updateProdutoDto);
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Remover produto',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'OK',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não encontrado',
+  })
   remove(@Param('id') id: string) {
     return this.produtoService.remove(id);
   }

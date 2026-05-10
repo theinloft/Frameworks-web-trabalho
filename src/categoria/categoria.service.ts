@@ -13,11 +13,14 @@ export class CategoriaService {
     private readonly repositoryCategoria: Repository<Categoria>,
     private readonly categoriaValidator: CategoriaValidator,
   ) {}
-  async create(createCategoriaDto: CreateCategoriaDto) {
-    this.categoriaValidator.validateCategoria(createCategoriaDto);
-    const categoria = this.repositoryCategoria.create(createCategoriaDto);
+  async create(dto: CreateCategoriaDto) {
+    dto.categoria = dto.categoria.trim().toLowerCase();
 
-    return await this.repositoryCategoria.save(categoria);
+    await this.categoriaValidator.validateCategoria(dto);
+
+    const categoria = this.repositoryCategoria.create(dto);
+
+    return this.repositoryCategoria.save(categoria);
   }
 
   async findAll() {
@@ -29,7 +32,7 @@ export class CategoriaService {
   }
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    this.categoriaValidator.validateCategoria(updateCategoriaDto);
+    await this.categoriaValidator.validateCategoria(updateCategoriaDto);
     const categoria = await this.repositoryCategoria.findOne({ where: { id } });
     if (!categoria) {
       throw new Error('Categoria não encontrada');

@@ -16,7 +16,7 @@ export class CategoriaController {
   constructor(private readonly categoriaService: CategoriaService) {}
 
   @Post()
-  create(@Body() createCategoriaDto: CreateCategoriaDto) {
+  async create(@Body() createCategoriaDto: CreateCategoriaDto) {
     return this.categoriaService.create(createCategoriaDto);
   }
 

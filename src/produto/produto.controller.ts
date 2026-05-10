@@ -33,7 +33,7 @@ export class ProdutoController {
     status: 401,
     description: 'Não autorizado',
   })
-  create(@Body() createProdutoDto: CreateProdutoDto) {
+  async create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtoService.create(createProdutoDto);
   }
 

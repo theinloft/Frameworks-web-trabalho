@@ -5,18 +5,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Produto } from './entities/produto.entity';
 import { Repository } from 'typeorm';
 import { Categoria } from 'src/categoria/entities/categoria.entity';
+import { ProdutoValidator } from './validators/produto.validator';
 
 @Injectable()
 export class ProdutoService {
   constructor(
     @InjectRepository(Produto)
     private readonly produtoRepo: Repository<Produto>,
+    private readonly produtoValidator: ProdutoValidator,
 
     @InjectRepository(Categoria)
     private readonly categoriaRepo: Repository<Categoria>,
   ) {}
 
   async create(dto: CreateProdutoDto) {
+    await this.produtoValidator.validateProduto(dto);
+
     const produto = this.produtoRepo.create({
       nome: dto.nome,
       preco: dto.preco,
@@ -37,6 +41,7 @@ export class ProdutoService {
   }
 
   async update(id: string, updateProdutoDto: UpdateProdutoDto) {
+    await this.produtoValidator.validateProduto(updateProdutoDto);
     return this.produtoRepo.update(id, updateProdutoDto);
   }
 

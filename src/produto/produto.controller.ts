@@ -10,7 +10,6 @@ import {
 import { ProdutoService } from './produto.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
-import { Produto } from './entities/produto.entity';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('produto')

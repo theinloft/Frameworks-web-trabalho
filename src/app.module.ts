@@ -5,6 +5,8 @@ import { ProdutoModule } from './produto/produto.module';
 import { Categoria } from './categoria/entities/categoria.entity';
 import { Produto } from './produto/entities/produto.entity';
 import { CategoriaModule } from './categoria/categoria.module';
+import { ClienteModule } from './cliente/cliente.module';
+import { Cliente } from './cliente/entities/cliente.entity';
 
 @Module({
   imports: [
@@ -17,12 +19,14 @@ import { CategoriaModule } from './categoria/categoria.module';
       database: 'Ecommerce_FW',
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Produto, Categoria],
+      entities: [Produto, Categoria, Cliente],
     }),
 
     ProdutoModule,
 
     CategoriaModule,
+
+    ClienteModule,
   ],
 })
 export class AppModule {}

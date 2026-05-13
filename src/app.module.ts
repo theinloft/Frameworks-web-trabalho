@@ -7,6 +7,7 @@ import { Produto } from './produto/entities/produto.entity';
 import { CategoriaModule } from './categoria/categoria.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { Cliente } from './cliente/entities/cliente.entity';
+import { PedidoModule } from './pedido/pedido.module';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { Cliente } from './cliente/entities/cliente.entity';
     CategoriaModule,
 
     ClienteModule,
+
+    PedidoModule,
   ],
 })
 export class AppModule {}

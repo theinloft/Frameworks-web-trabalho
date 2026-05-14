@@ -10,7 +10,12 @@ import {
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Pedido')
 @Controller('pedido')
@@ -78,17 +83,18 @@ export class PedidoController {
   }
 
   @Delete(':id')
-  @ApiOperation({
-    summary: 'Remover pedido',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Pedido removido com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido não encontrado',
-  })
+  @ApiExcludeEndpoint()
+  // @ApiOperation({
+  //   summary: 'Remover pedido',
+  // })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Pedido removido com sucesso',
+  // })
+  // @ApiResponse({
+  //   status: 404,
+  //   description: 'Pedido não encontrado',
+  // })
   remove(@Param('id') id: string) {
     return this.pedidoService.remove(id);
   }

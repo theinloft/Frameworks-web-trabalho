@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Produto } from 'src/produto/entities/produto.entity';
 import { PedidoItem } from './entities/pedidoItem.entity';
 import { PedidoValidator } from './validators/pedido.validator';
+import { Cliente } from 'src/cliente/entities/cliente.entity';
 
 @Injectable()
 export class PedidoService {
@@ -15,6 +16,8 @@ export class PedidoService {
     private readonly pedidoRepo: Repository<Pedido>,
     @InjectRepository(Produto)
     private readonly produtoRepo: Repository<Produto>,
+    @InjectRepository(Cliente)
+    private readonly clienteRepo: Repository<Cliente>,
     private readonly pedidoValidator: PedidoValidator,
   ) {}
 
@@ -72,8 +75,53 @@ export class PedidoService {
     });
   }
 
-  update(id: string, _updatePedidoDto: UpdatePedidoDto) {
-    return this.pedidoRepo.update(id, _updatePedidoDto);
+  async update(id: string, dto: UpdatePedidoDto): Promise<Pedido> {
+    await this.pedidoValidator.validatePedido(dto);
+
+    const pedido = await this.pedidoRepo.findOne({
+      where: { id },
+      relations: ['itens', 'itens.produto'],
+    });
+
+    if (!pedido) {
+      throw new NotFoundException('Pedido não encontrado');
+    }
+
+    const cliente = await this.clienteRepo.findOneBy({
+      id: dto.clienteId,
+    });
+
+    pedido.cliente = cliente!;
+
+    for (const itemDto of dto.itens) {
+      const produto = await this.produtoRepo.findOneBy({
+        id: itemDto.produtoId,
+      });
+
+      const itemExistente = pedido.itens.find(
+        (item) => item.produto.id === itemDto.produtoId,
+      );
+
+      if (itemExistente) {
+        itemExistente.quantidade += itemDto.quantidade;
+        itemExistente.precoUnitario = produto!.preco!;
+      } else {
+        const novoItem = new PedidoItem();
+
+        novoItem.produto = produto!;
+        novoItem.quantidade = itemDto.quantidade;
+        novoItem.precoUnitario = produto!.preco!;
+
+        pedido.itens.push(novoItem);
+      }
+    }
+
+    pedido.valorTotal = pedido.itens.reduce(
+      (total, item) => total + item.precoUnitario * item.quantidade,
+      0,
+    );
+
+    return await this.pedidoRepo.save(pedido);
   }
 
   remove(id: string) {

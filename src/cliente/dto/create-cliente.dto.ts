@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateClienteDto {
   @ApiProperty({
@@ -7,7 +8,9 @@ export class CreateClienteDto {
   })
   @IsString()
   @MinLength(3)
-  nome?: string;
+  @IsNotEmpty()
+  @Transform(({ value }) => String(value).trim().replace(/\s+/g, ' '))
+  nome!: string;
 
   @ApiProperty({
     example: 'joao@gmail.com',

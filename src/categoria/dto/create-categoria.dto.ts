@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateCategoriaDto {
   @ApiProperty({
@@ -8,5 +9,9 @@ export class CreateCategoriaDto {
   })
   @IsString()
   @MinLength(3)
-  categoria: string;
+  @IsNotEmpty()
+  @Transform(({ value }) =>
+    String(value).trim().replace(/\s+/g, ' ').toLowerCase(),
+  )
+  categoria?: string;
 }

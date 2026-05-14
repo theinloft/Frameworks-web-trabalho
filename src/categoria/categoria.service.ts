@@ -14,8 +14,6 @@ export class CategoriaService {
     private readonly categoriaValidator: CategoriaValidator,
   ) {}
   async create(dto: CreateCategoriaDto) {
-    dto.categoria = dto.categoria.trim().toLowerCase();
-
     await this.categoriaValidator.validateCategoria(dto);
 
     const categoria = this.repositoryCategoria.create(dto);

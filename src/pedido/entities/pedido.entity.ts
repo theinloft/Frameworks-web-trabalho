@@ -17,7 +17,11 @@ export class Pedido {
   @CreateDateColumn()
   horarioPedido!: Date;
 
-  @Column('decimal')
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+  })
   valorTotal!: number;
 
   @ManyToOne(() => Cliente)
@@ -25,6 +29,7 @@ export class Pedido {
 
   @OneToMany(() => PedidoItem, (item) => item.pedido, {
     cascade: true,
+    eager: true,
   })
   itens!: PedidoItem[];
 }

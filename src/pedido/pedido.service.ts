@@ -8,6 +8,7 @@ import { Produto } from 'src/produto/entities/produto.entity';
 import { PedidoItem } from './entities/pedidoItem.entity';
 import { PedidoValidator } from './validators/pedido.validator';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
+import { PedidoResponseDto } from './dto/pedido-response.dto';
 
 @Injectable()
 export class PedidoService {
@@ -68,63 +69,100 @@ export class PedidoService {
     });
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.pedidoRepo.findOne({
       where: { id },
       relations: ['cliente', 'itens', 'itens.produto'],
     });
   }
 
-  async update(id: string, dto: UpdatePedidoDto): Promise<Pedido> {
+  async update(id: string, dto: UpdatePedidoDto): Promise<PedidoResponseDto> {
     await this.pedidoValidator.validatePedido(dto);
 
     const pedido = await this.pedidoRepo.findOne({
       where: { id },
-      relations: ['itens', 'itens.produto'],
+      relations: ['cliente', 'itens', 'itens.produto'],
     });
 
     if (!pedido) {
       throw new NotFoundException('Pedido não encontrado');
     }
 
-    const cliente = await this.clienteRepo.findOneBy({
-      id: dto.clienteId,
-    });
-
-    pedido.cliente = cliente!;
-
-    for (const itemDto of dto.itens) {
-      const produto = await this.produtoRepo.findOneBy({
-        id: itemDto.produtoId,
+    if (dto.clienteId) {
+      const cliente = await this.clienteRepo.findOneBy({
+        id: dto.clienteId,
       });
 
-      const itemExistente = pedido.itens.find(
-        (item) => item.produto.id === itemDto.produtoId,
-      );
+      if (!cliente) {
+        throw new NotFoundException('Cliente não encontrado');
+      }
 
-      if (itemExistente) {
-        itemExistente.quantidade += itemDto.quantidade;
-        itemExistente.precoUnitario = produto!.preco!;
-      } else {
-        const novoItem = new PedidoItem();
+      pedido.cliente = cliente;
+    }
 
-        novoItem.produto = produto!;
-        novoItem.quantidade = itemDto.quantidade;
-        novoItem.precoUnitario = produto!.preco!;
+    if (dto.itens) {
+      for (const itemDto of dto.itens) {
+        const produto = await this.produtoRepo.findOneBy({
+          id: itemDto.produtoId,
+        });
 
-        pedido.itens.push(novoItem);
+        if (!produto) {
+          throw new NotFoundException(
+            `Produto ${itemDto.produtoId} não encontrado`,
+          );
+        }
+
+        const itemExistente = pedido.itens.find(
+          (item) => item.produto.id === itemDto.produtoId,
+        );
+
+        if (itemExistente) {
+          itemExistente.quantidade += itemDto.quantidade;
+
+          itemExistente.precoUnitario = produto.preco!;
+        } else {
+          const novoItem = new PedidoItem();
+
+          novoItem.produto = produto;
+          novoItem.quantidade = itemDto.quantidade;
+          novoItem.precoUnitario = produto.preco!;
+
+          novoItem.pedido = pedido;
+
+          pedido.itens.push(novoItem);
+        }
       }
     }
 
-    pedido.valorTotal = pedido.itens.reduce(
-      (total, item) => total + item.precoUnitario * item.quantidade,
-      0,
+    pedido.valorTotal = Number(
+      pedido.itens
+        .reduce(
+          (total, item) => total + item.precoUnitario * item.quantidade,
+          0,
+        )
+        .toFixed(2),
     );
 
-    return await this.pedidoRepo.save(pedido);
+    const pedidoSalvo = await this.pedidoRepo.save(pedido);
+    return this.toResponse(pedidoSalvo);
   }
 
   remove(id: string) {
     return this.pedidoRepo.delete(id);
+  }
+
+  private toResponse(pedido: Pedido): PedidoResponseDto {
+    return {
+      id: pedido.id,
+      cliente: pedido.cliente,
+      valorTotal: pedido.valorTotal,
+      horarioPedido: pedido.horarioPedido,
+      itens: pedido.itens.map((item) => ({
+        id: item.id,
+        produto: item.produto,
+        quantidade: item.quantidade,
+        precoUnitario: item.precoUnitario,
+      })),
+    };
   }
 }

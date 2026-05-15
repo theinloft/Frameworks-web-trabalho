@@ -7,7 +7,9 @@ export class PedidoItem {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => Pedido, (pedido) => pedido.itens)
+  @ManyToOne(() => Pedido, (pedido) => pedido.itens, {
+    onDelete: 'CASCADE',
+  })
   pedido!: Pedido;
 
   @ManyToOne(() => Produto)

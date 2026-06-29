@@ -6,16 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Put,
+  BadRequestException,
 } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import {
+  ApiBearerAuth,
   ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/jwt.guard';
+import { StatusPedido } from './entities/pedido.entity';
 
 @ApiTags('Pedido')
 @Controller('pedido')
@@ -34,6 +40,8 @@ export class PedidoController {
     status: 400,
     description: 'Erro de validação',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   create(@Body() createPedidoDto: CreatePedidoDto) {
     return this.pedidoService.create(createPedidoDto);
   }
@@ -46,6 +54,8 @@ export class PedidoController {
     status: 200,
     description: 'Pedidos listados com sucesso',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   findAll() {
     return this.pedidoService.findAll();
   }
@@ -62,6 +72,8 @@ export class PedidoController {
     status: 404,
     description: 'Pedido não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   findOne(@Param('id') id: string) {
     return this.pedidoService.findOne(id);
   }
@@ -78,6 +90,8 @@ export class PedidoController {
     status: 404,
     description: 'Pedido não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidoService.update(id, updatePedidoDto);
   }
@@ -97,5 +111,19 @@ export class PedidoController {
   // })
   remove(@Param('id') id: string) {
     return this.pedidoService.remove(id);
+  }
+
+  @Put('atualizar-status/:id')
+  @ApiOperation({ summary: 'Atualizar status do pedido' })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  atualizarStatus(
+    @Param('id') id: string,
+    @Body('status') status: StatusPedido,
+  ) {
+    if (!Object.values(StatusPedido).includes(status)) {
+      throw new BadRequestException('Status inválido');
+    }
+    return this.pedidoService.atualizarStatus(id, status);
   }
 }

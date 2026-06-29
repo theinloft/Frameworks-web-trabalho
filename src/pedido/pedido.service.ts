@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Repository } from 'typeorm';
-import { Pedido } from './entities/pedido.entity';
+import { Pedido, StatusPedido } from './entities/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Produto } from 'src/produto/entities/produto.entity';
 import { PedidoItem } from './entities/pedidoItem.entity';
@@ -149,6 +149,13 @@ export class PedidoService {
 
   remove(id: string) {
     return this.pedidoRepo.delete(id);
+  }
+
+  async atualizarStatus(id: string, status: StatusPedido): Promise<Pedido> {
+    const pedido = await this.findOne(id);
+    if (!pedido) throw new NotFoundException('Pedido não encontrado');
+    pedido.status = status;
+    return this.pedidoRepo.save(pedido);
   }
 
   private toResponse(pedido: Pedido): PedidoResponseDto {

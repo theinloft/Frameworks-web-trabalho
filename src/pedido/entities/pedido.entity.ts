@@ -9,6 +9,11 @@ import {
 } from 'typeorm';
 import { PedidoItem } from './pedidoItem.entity';
 
+export enum StatusPedido {
+  ANDAMENTO = 'andamento',
+  CONCLUIDO = 'concluido',
+  CANCELADO = 'cancelado',
+}
 @Entity('pedidos')
 export class Pedido {
   @PrimaryGeneratedColumn('uuid')
@@ -23,6 +28,9 @@ export class Pedido {
     scale: 2,
   })
   valorTotal!: number;
+
+  @Column({ type: 'enum', enum: StatusPedido, default: StatusPedido.ANDAMENTO })
+  status!: StatusPedido;
 
   @ManyToOne(() => Cliente)
   cliente!: Cliente;

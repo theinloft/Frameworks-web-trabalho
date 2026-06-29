@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/jwt.guard';
 
 @Controller('categoria')
 export class CategoriaController {
@@ -32,6 +34,8 @@ export class CategoriaController {
     status: 401,
     description: 'Não autorizado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   async create(@Body() createCategoriaDto: CreateCategoriaDto) {
     return this.categoriaService.create(createCategoriaDto);
   }
@@ -60,6 +64,8 @@ export class CategoriaController {
     status: 404,
     description: 'Não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   findOne(@Param('id') id: string) {
     return this.categoriaService.findOne(+id);
   }
@@ -76,6 +82,8 @@ export class CategoriaController {
     status: 404,
     description: 'Não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   update(
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
@@ -95,6 +103,8 @@ export class CategoriaController {
     status: 404,
     description: 'Não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   remove(@Param('id') id: number) {
     return this.categoriaService.remove(+id);
   }

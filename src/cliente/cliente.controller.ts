@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/jwt.guard';
 
 @Controller('cliente')
 export class ClienteController {
@@ -32,6 +34,8 @@ export class ClienteController {
     status: 401,
     description: 'Não autorizado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   create(@Body() createClienteDto: CreateClienteDto) {
     return this.clienteService.create(createClienteDto);
   }
@@ -44,6 +48,8 @@ export class ClienteController {
     status: 200,
     description: 'OK',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   findAll() {
     return this.clienteService.findAll();
   }
@@ -60,6 +66,8 @@ export class ClienteController {
     status: 404,
     description: 'Cliente não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   findOne(@Param('id') id: string) {
     return this.clienteService.findOne(id);
   }
@@ -76,6 +84,8 @@ export class ClienteController {
     status: 404,
     description: 'Cliente não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
     return this.clienteService.update(id, updateClienteDto);
   }
@@ -92,6 +102,8 @@ export class ClienteController {
     status: 404,
     description: 'Cliente não encontrado',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   remove(@Param('id') id: string) {
     return this.clienteService.remove(id);
   }

@@ -7,9 +7,13 @@ import { PedidoItem } from './entities/pedidoItem.entity';
 import { Pedido } from './entities/pedido.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PedidoValidator } from './validators/pedido.validator';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, PedidoItem, Produto, Cliente])],
+  imports: [
+    TypeOrmModule.forFeature([Pedido, PedidoItem, Produto, Cliente]),
+    AuthModule,
+  ],
   controllers: [PedidoController],
   providers: [PedidoService, PedidoValidator],
 })

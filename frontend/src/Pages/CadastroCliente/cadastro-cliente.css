@@ -1,0 +1,88 @@
+.main {
+  background: #111;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #1a1a1a;
+  padding: 48px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.logo {
+  color: #f5c800;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+
+.campo {
+  margin-bottom: 16px;
+}
+
+.label {
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #f5c800;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #f5c800;
+  border: none;
+  color: #111;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.btn:hover {
+  background: #fff;
+}
+
+.rodape {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.link {
+  color: #f5c800;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

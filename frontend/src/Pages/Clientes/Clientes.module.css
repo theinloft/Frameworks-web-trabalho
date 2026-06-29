@@ -1,0 +1,258 @@
+.page {
+  background: #111;
+  min-height: 100vh;
+  font-family: "Arial Black", Arial, sans-serif;
+  padding: 48px;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.titulo {
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.secaoHead {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.secaoTitulo {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 0 8px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 4px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.row:hover {
+  background: rgba(245, 200, 0, 0.03);
+}
+
+.celula {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.celulaSecundaria {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 400;
+  font-family: Arial, sans-serif;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.btnNovo {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnNovo:hover {
+  background: #fff;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.btnEditar {
+  background: transparent;
+  color: #f5c800;
+  border: 1px solid #f5c800;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnEditar:hover {
+  background: #f5c800;
+  color: #111;
+}
+
+.btnExcluir {
+  background: transparent;
+  color: rgba(255, 80, 80, 0.8);
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnExcluir:hover {
+  background: rgba(255, 80, 80, 0.15);
+}
+
+.celulaNome {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.celulaNome:hover {
+  color: #f5c800;
+}
+
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.lightbox {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.lightboxFechar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.lightboxFechar:hover {
+  color: #fff;
+}
+
+.lightboxImagem {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.lightboxSemImagem {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.lightboxInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lightboxNome {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lightboxPreco {
+  color: #f5c800;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.lightboxCategoria {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+@media (max-width: 1024px) {
+  .tableHead,
+  .row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .lightbox {
+    margin: 0 16px;
+    padding: 24px 16px;
+  }
+
+  .lightboxImagem {
+    max-height: 250px;
+  }
+
+  .tableHead,
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .celulaAcoes {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .btnNovo {
+    padding: 8px 14px;
+    font-size: 10px;
+  }
+}

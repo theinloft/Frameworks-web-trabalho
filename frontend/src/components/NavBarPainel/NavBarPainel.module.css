@@ -1,0 +1,110 @@
+.nav {
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  height: 52px;
+  font-family: "Arial Black", Arial, sans-serif;
+  position: relative;
+  z-index: 100;
+}
+
+.logo {
+  color: #f5c800;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-right: auto;
+}
+
+/* links — desktop */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 6px 16px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.link:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ativo {
+  color: #f5c800;
+  border-color: #f5c800;
+}
+
+/* hamburguer — escondido no desktop */
+.hamburguer {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0 24px;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 52px;
+  }
+
+  .hamburguer {
+    display: flex;
+  }
+
+  /* mobile */
+  .links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 12px 0;
+    gap: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* links visíveis quando menu aberto */
+  .links.aberto {
+    display: flex;
+  }
+
+  .link {
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+  }
+
+  .link:hover {
+    border-color: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
+
+  .btnSair {
+    margin-left: 0;
+    margin-top: 8px;
+    padding: 12px 0;
+    text-align: center;
+  }
+}

@@ -1,0 +1,108 @@
+.main {
+  background: #111;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Arial Black", Arial, sans-serif;
+}
+
+.card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 48px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.erro {
+  color: #ff4d4d;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: Arial, sans-serif;
+}
+
+.logo {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.subtitulo {
+  color: #f5c800;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+  font-family: Arial, sans-serif;
+}
+
+.campo {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  font-family: Arial, sans-serif;
+}
+
+.input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #f5c800;
+}
+
+.btn {
+  width: 100%;
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 14px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn:hover {
+  background: #fff;
+}
+
+.rodape {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 24px;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+}
+
+.link {
+  color: #f5c800;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

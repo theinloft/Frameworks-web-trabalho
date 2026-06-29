@@ -1,0 +1,71 @@
+.buscaCliente {
+  position: relative;
+  width: 350px;
+}
+.form {
+  background-color: black;
+  color: #fff;
+}
+
+.buscaCliente input {
+  width: 100%;
+  padding: 8px;
+}
+
+.listaClientes {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.listaClientes li {
+  color: #fff;
+}
+
+.listaClientes li:hover {
+  background: rgba(245, 200, 0, 0.1);
+  color: #f5c800;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+label {
+  font-family: "Arial Black", Arial, sans-serif;
+}
+
+.btnNovo {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnNovo:hover {
+  background: #fff;
+}
+
+.titulo {
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.page {
+  background: #111;
+  min-height: 100vh;
+  font-family: "Arial Black", Arial, sans-serif;
+  padding: 48px;
+  overflow-x: hidden;
+  max-width: 100%;
+}

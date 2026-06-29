@@ -1,0 +1,259 @@
+.page {
+  background: #111;
+  min-height: 100vh;
+  font-family: "Arial Black", Arial, sans-serif;
+  padding: 48px;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.tag {
+  background: #f5c800;
+  color: #111;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.titulo {
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.destaque {
+  color: #f5c800;
+}
+
+.btnSair {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnSair:hover {
+  border-color: #f5c800;
+  color: #f5c800;
+}
+
+/* KPIs */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 48px;
+}
+
+.kpi {
+  background: #111;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kpiNum {
+  color: #fff;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.amarelo {
+  color: #f5c800;
+}
+
+.kpiLabel {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 32px;
+}
+
+.secao {
+  display: flex;
+  flex-direction: column;
+}
+
+.secaoHead {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.secaoTitulo {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0 0 8px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.row:hover {
+  background: rgba(245, 200, 0, 0.03);
+}
+
+.celula {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.celulaSecundaria {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 400;
+  font-family: Arial, sans-serif;
+}
+
+/* Cards de cliente */
+.clienteCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f5c800;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.clienteNome {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.clienteMeta {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  margin-top: 2px;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page {
+    padding: 32px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .titulo {
+    font-size: clamp(18px, 6vw, 28px);
+  }
+
+  /* KPIs empilham em coluna única */
+  .kpis {
+    grid-template-columns: 1fr;
+    gap: 1px;
+  }
+
+  .kpi {
+    padding: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .kpiNum {
+    font-size: 28px;
+  }
+
+  /* Grid vira coluna única */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Seções ficam com altura limitada + scroll */
+  .secao {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .row {
+    padding: 12px 0;
+  }
+
+  .celula {
+    font-size: 12px;
+  }
+
+  .celulaSecundaria {
+    font-size: 11px;
+  }
+
+  .clienteCard {
+    padding: 12px 0;
+  }
+}

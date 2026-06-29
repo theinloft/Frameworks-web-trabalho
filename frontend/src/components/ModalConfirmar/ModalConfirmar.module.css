@@ -1,0 +1,87 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.modal {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.mensagem {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Arial Black", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btnSim {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnSim:hover {
+  background: #fff;
+}
+
+.btnNao {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnNao:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    margin: 0 16px;
+    padding: 24px 16px;
+    align-items: center;
+  }
+
+  .acoes {
+    flex-direction: column;
+    width: 100%;
+  }
+}

@@ -1,0 +1,96 @@
+.foot {
+	width: 100%;
+	height: 160px;
+	background-color: #f5c800;
+}
+
+.foot address .titulo {
+	padding-top: 10px;
+	color: #000;
+	display: block;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: .5rem;
+    font-family: "Arial", sans-serif;
+    font-weight: bolder;
+    line-height: 1.2;
+    font-size: 1.5rem;
+	font-style: normal;
+	letter-spacing: 1px;
+}
+
+.foot address p {
+	font-size: 14px;
+	/*font-weight: bold;*/
+	color: #000;
+	line-height: 20px;
+	font-style: normal;
+	font-family: "Arial", sans-serif;
+}
+
+.area-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: 0 auto;
+} 
+
+/* .foot address{
+	float: left;
+}
+
+.foot nav{
+	float: right;
+} */
+
+.social-nav li {
+	list-style-type: none;
+	display: inline-block;
+	padding-top: 10px; 
+	width: 70px;
+}
+
+.social-nav li a:link,
+.social-nav li a:visited {
+	/*remove o sublinhado da tag a*/
+	text-decoration: none;
+	color: #000;
+	font-size: 40px;
+}
+
+.facebook,
+.twitter,
+.instagram,
+.google{
+	transition: color 0.2s, transform 0.3s;
+
+}
+
+.facebook:hover{
+	color: #3B5998;
+	transform: translateY(-10px);
+
+}
+
+.twitter:hover{
+	color: #00ACED;
+	transform: translateY(-10px);
+
+}
+
+.instagram:hover{
+	color: #517FA4;
+	transform: translateY(-10px);
+
+}
+
+.google:hover{
+	color: #DD4B39;
+	transform: translateY(-10px);
+}

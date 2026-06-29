@@ -1,0 +1,160 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitulo {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-family: "Arial Black", Arial, sans-serif;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-family: "Arial Black", Arial, sans-serif;
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #f5c800;
+}
+
+.modalAcoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btnSalvar {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnSalvar:hover {
+  background: #fff;
+}
+
+.btnCancelar {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnCancelar:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.input option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.erro {
+  color: #ff5050;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+.btnImagem {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-block;
+  text-align: center;
+}
+
+.btnImagem:hover {
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 24px 16px;
+    margin: 0 16px;
+  }
+
+  .modalTitulo {
+    font-size: 14px;
+  }
+
+  .input {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .modalAcoes {
+    flex-direction: column;
+  }
+
+  .btnSalvar,
+  .btnCancelar {
+    padding: 10px 16px;
+    font-size: 10px;
+  }
+
+  .btnImagem {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -8,6 +8,9 @@ import { CategoriaModule } from './categoria/categoria.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { Cliente } from './cliente/entities/cliente.entity';
 import { PedidoModule } from './pedido/pedido.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { AuthModule } from './auth/auth.module';
+import { Usuario } from './usuario/entities/usuario.entity';
 
 @Module({
   imports: [
@@ -20,7 +23,7 @@ import { PedidoModule } from './pedido/pedido.module';
       database: 'Ecommerce_FW',
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Produto, Categoria, Cliente],
+      entities: [Produto, Categoria, Cliente, Usuario],
     }),
 
     ProdutoModule,
@@ -30,6 +33,10 @@ import { PedidoModule } from './pedido/pedido.module';
     ClienteModule,
 
     PedidoModule,
+
+    UsuarioModule,
+
+    AuthModule,
   ],
 })
 export class AppModule {}

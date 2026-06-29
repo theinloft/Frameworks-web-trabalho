@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -47,5 +47,12 @@ export class ProdutoService {
 
   async remove(id: string) {
     return this.produtoRepo.remove({ id });
+  }
+
+  async salvarImagem(id: string, filename: string): Promise<Produto> {
+    const produto = await this.produtoRepo.findOneBy({ id });
+    if (!produto) throw new NotFoundException('Produto não encontrado');
+    produto.imagem = filename;
+    return this.produtoRepo.save(produto);
   }
 }

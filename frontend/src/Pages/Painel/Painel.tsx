@@ -3,6 +3,8 @@ import styles from './Painel.module.css';
 import Paginacao from '../../components/Paginacao/Paginacao';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../../hooks/useApi';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 type Cliente = {
   id: string;
@@ -18,7 +20,7 @@ type Produto = {
 
 type Pedido = {
   id: string;
-  HorarioPedido: string;
+  horarioPedido: string;
 };
 
 const POR_PAGINA = 5;
@@ -102,7 +104,9 @@ export default function Painel() {
             <div key={p.id} className={styles.row}>
               <span className={styles.celula}>{p.id.substring(0, 8)}...</span>
               <span className={styles.celulaSecundaria}>
-                {new Date(p.HorarioPedido).toLocaleDateString('pt-BR')}
+                {format(new Date(p.horarioPedido), 'dd/MM/yyyy HH:mm', {
+                  locale: ptBR,
+                })}
               </span>
             </div>
           ))}

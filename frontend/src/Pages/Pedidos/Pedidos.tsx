@@ -119,7 +119,12 @@ export default function Pedido() {
                   })}
                 </span>
                 <span className={styles.celulaSecundaria}>{p.id}</span>
-                <span className={styles.celulaSecundaria}>{p.status}</span>
+                <span
+                  className={styles.celulaSecundaria}
+                  style={{ color: statusCor[p.status] ?? '#fff' }}
+                >
+                  {p.status}
+                </span>
                 <span className={styles.celulaAcoes}>
                   <button
                     className={styles.btnEditar}

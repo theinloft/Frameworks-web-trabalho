@@ -25,11 +25,27 @@ export default function CadastroUsuario() {
 
       if (!res.ok) {
         const data = await res.json();
-        setErro(data.message || 'Erro ao cadastrar.');
+        setErro(
+          Array.isArray(data.message)
+            ? data.message.join(', ')
+            : data.message || 'Erro ao cadastrar.',
+        );
         return;
       }
 
-      navigate('/login'); // sucesso → vai para o login
+      const loginRes = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, senha: form.senha }),
+      });
+
+      if (loginRes.ok) {
+        const { token } = await loginRes.json();
+        localStorage.setItem('token', token);
+        navigate('/painel');
+      } else {
+        navigate('/login');
+      }
     } catch {
       setErro('Não foi possível conectar ao servidor.');
     } finally {

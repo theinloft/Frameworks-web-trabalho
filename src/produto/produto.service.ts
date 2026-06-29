@@ -41,8 +41,18 @@ export class ProdutoService {
   }
 
   async update(id: string, updateProdutoDto: UpdateProdutoDto) {
-    await this.produtoValidator.validateProduto(updateProdutoDto);
-    return this.produtoRepo.update(id, updateProdutoDto);
+    await this.produtoValidator.validateProduto(updateProdutoDto, id);
+
+    const produto = await this.produtoRepo.findOneBy({ id });
+    if (!produto) throw new NotFoundException('Produto não encontrado');
+
+    if (updateProdutoDto.nome) produto.nome = updateProdutoDto.nome;
+    if (updateProdutoDto.preco) produto.preco = updateProdutoDto.preco;
+    if (updateProdutoDto.categoriaId) {
+      produto.categoria = { id: updateProdutoDto.categoriaId } as Categoria;
+    }
+
+    return this.produtoRepo.save(produto);
   }
 
   async remove(id: string) {

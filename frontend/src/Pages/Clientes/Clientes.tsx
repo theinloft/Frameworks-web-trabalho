@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { paginar } from "../../utils/utils";
-import Modal from "../../components/Modal/Modal";
-import { useApi } from "../../hooks/useApi";
-import Paginacao from "../../components/Paginacao/Paginacao";
-import styles from "./Clientes.module.css";
-import ModalConfirmar from "../../components/ModalConfirmar/ModalConfirmar";
+import { useState } from 'react';
+import { paginar } from '../../utils/utils';
+import Modal from '../../components/Modal/Modal';
+import { useApi } from '../../hooks/useApi';
+import Paginacao from '../../components/Paginacao/Paginacao';
+import styles from './Clientes.module.css';
+import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
 
 const POR_PAGINA = 5;
 
@@ -19,19 +19,19 @@ export default function Clientes() {
   const [editando, setEditando] = useState<Cliente | null>(null);
   const [criando, setCriando] = useState(false);
   const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null);
-  const [erro, setErro] = useState("");
+  const [erro, setErro] = useState('');
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
 
-  const [form, setForm] = useState({ nome: "", email: "" });
+  const [form, setForm] = useState({ nome: '', email: '' });
 
   const { data: clientes, setData: setClientes } = useApi<Cliente[]>(
-    "http://localhost:3000/api/clientes",
+    'http://localhost:3000/api/cliente',
   );
 
   const camposClientes = [
-    { label: "NOME", chave: "nome" },
-    { label: "EMAIL", chave: "email", tipo: "email" },
+    { label: 'NOME', chave: 'nome' },
+    { label: 'EMAIL', chave: 'email', tipo: 'email' },
   ];
 
   function abrirEdicao(c: Cliente) {
@@ -42,14 +42,14 @@ export default function Clientes() {
   async function salvarEdicao() {
     if (!editando) return;
     if (!form.nome.trim() || !form.email.trim()) {
-      setErro("Nome e email são obrigatórios.");
+      setErro('Nome e email são obrigatórios.');
       return;
     }
-    setErro("");
-    await fetch(`http://localhost:3000/api/clientes/${editando.id}`, {
-      method: "PUT",
+    setErro('');
+    await fetch(`http://localhost:3000/api/cliente/${editando.id}`, {
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(form),
@@ -63,8 +63,8 @@ export default function Clientes() {
   }
 
   async function excluir(id: string) {
-    await fetch(`http://localhost:3000/api/clientes/${id}`, {
-      method: "DELETE",
+    await fetch(`http://localhost:3000/api/cliente/${id}`, {
+      method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
     setClientes((prev) => (prev ? prev.filter((c) => c.id !== id) : prev));
@@ -73,14 +73,14 @@ export default function Clientes() {
 
   async function criarCliente() {
     if (!form.nome.trim() || !form.email.trim()) {
-      setErro("Nome e email são campos obrigatórios.");
+      setErro('Nome e email são campos obrigatórios.');
       return;
     }
-    setErro("");
-    const res = await fetch("http://localhost:3000/api/clientes", {
-      method: "POST",
+    setErro('');
+    const res = await fetch('http://localhost:3000/api/cliente', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(form),
@@ -88,7 +88,7 @@ export default function Clientes() {
     const novo = await res.json();
     setClientes((prev) => (prev ? [...prev, novo] : [novo]));
     setCriando(false);
-    setForm({ nome: "", email: "" });
+    setForm({ nome: '', email: '' });
   }
 
   return (
@@ -99,8 +99,8 @@ export default function Clientes() {
           className={styles.btnNovo}
           onClick={() => {
             setCriando(true);
-            setErro("");
-            setForm({ nome: "", email: "" });
+            setErro('');
+            setForm({ nome: '', email: '' });
           }}
         >
           + NOVO CLIENTE
@@ -160,7 +160,7 @@ export default function Clientes() {
           onConfirmar={salvarEdicao}
           onCancelar={() => {
             setEditando(null);
-            setErro("");
+            setErro('');
           }}
           labelConfirmar="SALVAR"
         />
@@ -177,7 +177,7 @@ export default function Clientes() {
           onConfirmar={criarCliente}
           onCancelar={() => {
             setCriando(false);
-            setErro("");
+            setErro('');
           }}
           labelConfirmar="CRIAR"
         />

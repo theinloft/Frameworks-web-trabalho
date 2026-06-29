@@ -61,7 +61,7 @@ export default function Produtos() {
     setForm({
       nome: p.nome,
       preco: p.preco,
-      categoriaId: p.categoria?.id || 0,
+      categoriaId: Number(p.categoria?.id) || 0, // garante número
     });
   }
 
@@ -80,20 +80,25 @@ export default function Produtos() {
       return;
     }
     setErro('');
+
     await fetch(`http://localhost:3000/api/produto/${editando.id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        nome: form.nome,
+        preco: Number(form.preco),
+        categoriaId: Number(form.categoriaId),
+      }),
     });
 
     if (imagem) {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `http://localhost:3000/api/produto/imagens/upload/${editando.id}`,
+        `http://localhost:3000/api/produto/${editando.id}/imagem`, // URL corrigida
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -112,7 +117,6 @@ export default function Produtos() {
   }
 
   async function excluir(id: string) {
-    if (!confirm('Excluir produto?')) return;
     await fetch(`http://localhost:3000/api/produto/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
@@ -135,15 +139,20 @@ export default function Produtos() {
       return;
     }
     setErro('');
+
     const res = await fetch('http://localhost:3000/api/produto', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        nome: form.nome,
+        preco: Number(form.preco),
+        categoriaId: Number(form.categoriaId),
+      }),
     });
-    const novo = await res.json();
+    const novo = (await res.json()) as Produto;
     setProdutos((prev) => (prev ? [...prev, novo] : [novo]));
     setCriando(false);
     setImagem(null);
@@ -153,7 +162,7 @@ export default function Produtos() {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `http://localhost:3000/api/produto/imagens/upload/${novo.id}`,
+        `http://localhost:3000/api/produto/${novo.id}/imagem`, // URL corrigida
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -178,7 +187,6 @@ export default function Produtos() {
           + NOVO PRODUTO
         </button>
       </div>
-      {/* Produtos */}
 
       <section className={styles.secao}>
         <div className={styles.secaoHead}></div>
@@ -222,6 +230,7 @@ export default function Produtos() {
           onChange={setPagProdutos}
         />
       </section>
+
       {confirmarExcluir && (
         <ModalConfirmar
           mensagem="Deseja excluir este produto?"
@@ -229,6 +238,7 @@ export default function Produtos() {
           onCancelar={() => setConfirmarExcluir(null)}
         />
       )}
+
       {editando && (
         <Modal
           titulo="EDITAR PRODUTO"
@@ -244,6 +254,7 @@ export default function Produtos() {
           labelConfirmar="SALVAR"
         />
       )}
+
       {criando && (
         <Modal
           titulo="NOVO PRODUTO"
@@ -259,6 +270,7 @@ export default function Produtos() {
           labelConfirmar="CRIAR"
         />
       )}
+
       {visualizando && (
         <div
           className={styles.lightboxOverlay}
@@ -274,7 +286,7 @@ export default function Produtos() {
             {visualizando.imagem ? (
               <img
                 className={styles.lightboxImagem}
-                src={`http://localhost:3000/uploads/${visualizando.imagem}`}
+                src={`http://localhost:3000/my-uploads/${visualizando.imagem}`} // URL corrigida
                 alt={visualizando.nome}
               />
             ) : (

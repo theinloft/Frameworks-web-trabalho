@@ -1,17 +1,52 @@
-.buscaCliente {
-  position: relative;
-  width: 350px;
-}
-.form {
-  background-color: black;
-  color: #fff;
+.card {
+  background: #181818;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  padding: 32px;
 }
 
-.buscaCliente input {
-  width: 100%;
+.dadosPedido {
+  margin-bottom: 40px;
+}
+
+.linha {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.campo {
+  flex: 1;
+}
+
+.linhaProduto {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-top: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+
+.inputQtde {
+  width: 80px;
   padding: 8px;
 }
 
+.secaoProdutos {
+  margin-top: 40px;
+  border-top: 1px solid #2d2d2d;
+  padding-top: 30px;
+  color: #fff;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
 .listaClientes {
   background: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -33,8 +68,9 @@
   margin-bottom: 32px;
 }
 
-label {
-  font-family: "Arial Black", Arial, sans-serif;
+.secaoTitulo {
+  font-family: 'Arial Black', Arial, sans-serif;
+  color: #fff;
 }
 
 .btnNovo {
@@ -49,7 +85,38 @@ label {
   font-family: inherit;
 }
 
+.btnAdicionar {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btnAdicionar:hover {
+  background: #fff;
+}
+
 .btnNovo:hover {
+  background: #fff;
+}
+
+.btnCriar {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btnCriar:hover {
   background: #fff;
 }
 
@@ -64,8 +131,146 @@ label {
 .page {
   background: #111;
   min-height: 100vh;
-  font-family: "Arial Black", Arial, sans-serif;
+  font-family: 'Arial Black', Arial, sans-serif;
   padding: 48px;
   overflow-x: hidden;
   max-width: 100%;
+}
+
+.carrinho {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.itemCarrinho {
+  display: grid;
+  grid-template-columns: 2fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.itemNome {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+
+.itemQtde {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  white-space: nowrap;
+}
+
+.itemPreco {
+  color: #f5c800;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.btnRemover {
+  background: transparent;
+  border: none;
+  color: rgba(255, 80, 80, 0.8);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
+.btnRemover:hover {
+  color: #ff5050;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 900;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .linha {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .linhaProduto {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .inputQtde {
+    width: 100%;
+  }
+
+  .btnNovo,
+  .btnAdicionar,
+  .btnCriar {
+    width: 100%;
+    padding: 12px 20px;
+  }
+
+  .secaoProdutos {
+    margin-top: 24px;
+    padding-top: 20px;
+  }
+  .itemCarrinho {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    row-gap: 4px;
+  }
+
+  .itemNome {
+    grid-column: 1 / -1;
+  }
+
+  .itemQtde {
+    grid-column: 1;
+  }
+
+  .itemPreco {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .btnRemover {
+    position: absolute;
+    top: 8px;
+    right: 0;
+  }
+
+  .itemCarrinho {
+    position: relative;
+    padding-right: 24px;
+  }
+
+  .total {
+    font-size: 14px;
+  }
 }

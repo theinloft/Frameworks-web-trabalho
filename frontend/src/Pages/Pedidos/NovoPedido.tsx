@@ -1,16 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApi } from '../../hooks/useApi';
 import styles from './NovoPedido.module.css';
 import Modal from '../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
-
-type Pedido = {
-  id: string;
-  cliente?: Cliente;
-  horarioPedido: string;
-  itens: Produto[];
-  status: string;
-};
+import BuscaAutoCompletar from '../../components/BuscaAutoCompletar/BuscaAutoCompletar';
 
 type Cliente = {
   id: string;
@@ -36,6 +29,7 @@ export default function NovoPedido() {
     useState<ProdutoItem | null>(null);
   const navigate = useNavigate();
   const [nomeCliente, setNomeCliente] = useState('');
+  const [nomeProduto, setNomeProduto] = useState('');
   const [criando, setCriandoCliente] = useState(false);
   const [erro, setErro] = useState('');
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(
@@ -44,7 +38,7 @@ export default function NovoPedido() {
   const token = localStorage.getItem('token');
 
   const { data: produtos } = useApi<ProdutoItem[]>(
-    'http://localhost:3000/api/produtos',
+    'http://localhost:3000/api/produto', // corrigido: singular
   );
   const camposClientes = [
     { label: 'NOME', chave: 'nome' },
@@ -55,31 +49,36 @@ export default function NovoPedido() {
     data: clientes,
     erro: erroClientes,
     setData: setClientes,
-  } = useApi<Cliente[]>('http://localhost:3000/api/cliente');
+  } = useApi<Cliente[]>('http://localhost:3000/api/cliente'); // corrigido: singular
 
   console.log('erroClientes:', erroClientes);
+
+  useEffect(() => {
+    console.log('NovoPedido montado!');
+    return () => console.log('NovoPedido desmontado!');
+  }, []);
+
+  useEffect(() => {
+    console.log('itensCarrinho mudou:', itensCarrinho);
+  }, [itensCarrinho]);
 
   function adicionarItem() {
     if (!produtoSelecionado) return;
 
-    const existente = itensCarrinho.find(
-      (i) => i.produto.id === produtoSelecionado.id,
-    );
-    if (existente) {
-      setItensCarrinho((prev) =>
-        prev.map((i) =>
-          i.produto.id === produtoSelecionado.id
-            ? { ...i, quantidade: i.quantidade + quantidade }
-            : i,
-        ),
+    setItensCarrinho((prev) => {
+      const existente = prev.find(
+        (i) => i.produto.id === produtoSelecionado.id,
       );
-    } else {
-      setItensCarrinho((prev) => [
-        ...prev,
-        { produto: produtoSelecionado, quantidade },
-      ]);
-    }
-    setProdutoSelecionado(null);
+      if (existente) {
+        return prev.map((i) =>
+          i.produto.id === produtoSelecionado.id
+            ? { produto: i.produto, quantidade: i.quantidade + quantidade }
+            : i,
+        );
+      }
+      return [...prev, { produto: produtoSelecionado, quantidade }];
+    });
+
     setQuantidade(1);
   }
 
@@ -94,6 +93,7 @@ export default function NovoPedido() {
     }
     setErro('');
     await fetch('http://localhost:3000/api/pedido', {
+      // corrigido: singular
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -121,6 +121,7 @@ export default function NovoPedido() {
     }
     setErro('');
     const res = await fetch('http://localhost:3000/api/cliente', {
+      // corrigido: singular
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -140,154 +141,152 @@ export default function NovoPedido() {
     clientes?.filter((c) =>
       c.nome.toLowerCase().includes(nomeCliente.toLowerCase()),
     ) ?? [];
+  const produtosFiltrados =
+    produtos?.filter((p) =>
+      p.nome.toLowerCase().includes(nomeProduto.toLowerCase()),
+    ) ?? [];
 
-  console.log('clientes:', clientes);
-  console.log('clientesFiltrados:', clientesFiltrados);
   return (
     <>
       <div className={styles.page}>
         <div className={styles.header}>
           <h1 className={styles.titulo}>NOVO PEDIDO</h1>
-          <div className={styles.buscaCliente}>
-            <button
-              className={styles.btnNovo}
-              onClick={() => {
-                setCriandoCliente(true);
-                setErro('');
-                setForm({ nome: '', email: '' });
-              }}
-            >
-              {' '}
-              + NOVO CLIENTE
-            </button>
-            <br></br>
-            <label className={styles.label}>CLIENTE:</label>
-            <input
-              type="text"
-              placeholder="Digite o nome do cliente"
-              value={nomeCliente}
-              onChange={(e) => setNomeCliente(e.target.value)}
-            />
-            {nomeCliente && clientesFiltrados.length > 0 && (
-              <ul className={styles.listaClientes}>
-                {clientesFiltrados.map((cliente) => (
-                  <li
-                    onClick={() => {
-                      setNomeCliente(cliente.nome);
-                      setClienteSelecionado(cliente);
-                    }}
-                  >
-                    {cliente.nome}
-                  </li>
-                ))}
-              </ul>
-            )}
+        </div>
 
-            {criando && (
-              <Modal
-                titulo="NOVO CLIENTE"
-                campos={camposClientes}
-                form={form}
-                erro={erro}
-                onChange={(chave, valor) =>
-                  setForm((f) => ({ ...f, [chave]: valor }))
-                }
-                onConfirmar={criarCliente}
-                onCancelar={() => {
-                  setCriandoCliente(false);
-                  setErro('');
-                }}
-                labelConfirmar="CRIAR"
-              />
-            )}
-            {clienteSelecionado && (
-              <div className={styles.secaoProdutos}>
-                <h2 className={styles.secaoTitulo}>PRODUTOS</h2>
+        <div className={styles.card}>
+          <div className={styles.dadosPedido}>
+            <div className={styles.linha}>
+              <div className={styles.campo}>
+                <label className={styles.label}>CLIENTE</label>
 
-                <div className={styles.adicionarProduto}>
-                  <select
-                    className={styles.select}
-                    value={produtoSelecionado?.id ?? ''}
-                    onChange={(e) => {
-                      const p =
-                        produtos?.find((p) => p.id === e.target.value) ?? null;
-                      setProdutoSelecionado(p);
-                    }}
-                  >
-                    <option value="">Selecione um produto...</option>
-                    {produtos?.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.nome} — R$ {Number(p.preco).toFixed(2)}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    className={styles.inputQtde}
-                    type="number"
-                    min={1}
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(Number(e.target.value))}
-                  />
-                  <button
-                    className={styles.btnAdicionar}
-                    onClick={adicionarItem}
-                  >
-                    + ADICIONAR
-                  </button>
-                </div>
-
-                {itensCarrinho.length > 0 && (
-                  <div className={styles.carrinho}>
-                    {itensCarrinho.map((item) => (
-                      <div
-                        key={item.produto.id}
-                        className={styles.itemCarrinho}
-                      >
-                        <span className={styles.itemNome}>
-                          {item.produto.nome}
-                        </span>
-                        <span className={styles.itemQtde}>
-                          {item.quantidade}x
-                        </span>
-                        <span className={styles.itemPreco}>
-                          R${' '}
-                          {(
-                            Number(item.produto.preco) * item.quantidade
-                          ).toFixed(2)}
-                        </span>
-                        <button
-                          className={styles.btnRemover}
-                          onClick={() => removerItem(item.produto.id)}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                    <div className={styles.total}>
-                      <span>TOTAL</span>
-                      <span>
-                        R${' '}
-                        {itensCarrinho
-                          .reduce(
-                            (acc, i) =>
-                              acc + Number(i.produto.preco) * i.quantidade,
-                            0,
-                          )
-                          .toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {erro && <p className={styles.erro}>{erro}</p>}
-
-                <button className={styles.btnCriar} onClick={criarPedido}>
-                  CONFIRMAR PEDIDO
-                </button>
+                <BuscaAutoCompletar
+                  items={clientesFiltrados}
+                  value={nomeCliente}
+                  placeholder="Digite o nome do cliente"
+                  getLabel={(c) => c.nome}
+                  onChange={(texto) => {
+                    setNomeCliente(texto);
+                    setClienteSelecionado(null);
+                  }}
+                  onSelect={(cliente) => {
+                    setClienteSelecionado(cliente);
+                    setNomeCliente(cliente.nome);
+                  }}
+                />
               </div>
-            )}
+
+              <button
+                className={styles.btnNovo}
+                onClick={() => {
+                  setCriandoCliente(true);
+                  setErro('');
+                  setForm({ nome: '', email: '' });
+                }}
+              >
+                + NOVO CLIENTE
+              </button>
+            </div>
           </div>
         </div>
+        <br></br>
+
+        {criando && (
+          <Modal
+            titulo="NOVO CLIENTE"
+            campos={camposClientes}
+            form={form}
+            erro={erro}
+            onChange={(chave, valor) =>
+              setForm((f) => ({ ...f, [chave]: valor }))
+            }
+            onConfirmar={criarCliente}
+            onCancelar={() => {
+              setCriandoCliente(false);
+              setErro('');
+            }}
+            labelConfirmar="CRIAR"
+          />
+        )}
+        {clienteSelecionado && (
+          <div className={styles.secaoProdutos}>
+            <h2 className={styles.secaoTitulo}>PRODUTOS</h2>
+
+            <div className={styles.linhaProduto}>
+              {' '}
+              <BuscaAutoCompletar
+                items={produtosFiltrados}
+                value={nomeProduto}
+                placeholder="Digite o produto"
+                getLabel={(p) => `${p.nome} - R$ ${Number(p.preco).toFixed(2)}`}
+                onChange={(texto) => {
+                  setNomeProduto(texto);
+                  setProdutoSelecionado(null);
+                }}
+                onSelect={(produto) => {
+                  setProdutoSelecionado(produto);
+                  setNomeProduto(produto.nome);
+                }}
+              />
+              <input
+                className={styles.inputQtde}
+                type="number"
+                value={quantidade || ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setQuantidade(val === '' ? 0 : Number(val));
+                }}
+                onBlur={() => {
+                  if (quantidade < 1) setQuantidade(1);
+                }}
+              />
+              <button className={styles.btnAdicionar} onClick={adicionarItem}>
+                + ADICIONAR
+              </button>
+            </div>
+
+            {itensCarrinho.length > 0 && (
+              <div className={styles.carrinho}>
+                {itensCarrinho.map((item) => (
+                  <div key={item.produto.id} className={styles.itemCarrinho}>
+                    <span className={styles.itemNome}>{item.produto.nome}</span>
+                    <span className={styles.itemQtde}>{item.quantidade}x</span>
+                    <span className={styles.itemPreco}>
+                      R${' '}
+                      {(Number(item.produto.preco) * item.quantidade).toFixed(
+                        2,
+                      )}
+                    </span>
+                    <button
+                      className={styles.btnRemover}
+                      onClick={() => removerItem(item.produto.id)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <div className={styles.total}>
+                  <span>TOTAL</span>
+                  <span>
+                    R${' '}
+                    {itensCarrinho
+                      .reduce(
+                        (acc, i) =>
+                          acc + Number(i.produto.preco) * i.quantidade,
+                        0,
+                      )
+                      .toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {erro && <p className={styles.erro}>{erro}</p>}
+
+            <button className={styles.btnCriar} onClick={criarPedido}>
+              CONFIRMAR PEDIDO
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

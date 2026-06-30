@@ -11,6 +11,7 @@ import { PedidoModule } from './pedido/pedido.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -25,6 +26,12 @@ import { Usuario } from './usuario/entities/usuario.entity';
       synchronize: true,
       entities: [Produto, Categoria, Cliente, Usuario],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 200,
+      },
+    ]),
 
     ProdutoModule,
 

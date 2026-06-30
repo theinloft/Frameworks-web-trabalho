@@ -1,35 +1,41 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./Pages/Login/Login";
-import Home from "./Pages/Home";
-import CadastroCliente from "./Pages/CadastroCliente/Cadastro-Cliente";
-import Painel from "./Pages/Painel/Painel";
-import Layout from "./Pages/Layout";
-import LayoutPainel from "./Pages/LayoutPainel";
-import Produtos from "./Pages/Produtos/Produtos";
-import Clientes from "./Pages/Clientes/Clientes";
-import Pedidos from "./Pages/Pedidos/Pedidos";
-import FaleConosco from "./Pages/FaleConosco/FaleConosco";
-import NovoPedido from "./Pages/Pedidos/NovoPedido";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import Layout from './Pages/Layout';
+import LayoutPainel from './Pages/LayoutPainel';
+
+const Login = lazy(() => import('./Pages/Login/Login'));
+const Home = lazy(() => import('./Pages/Home'));
+const CadastroCliente = lazy(
+  () => import('./Pages/CadastroCliente/Cadastro-Cliente'),
+);
+const FaleConosco = lazy(() => import('./Pages/FaleConosco/FaleConosco'));
+const Painel = lazy(() => import('./Pages/Painel/Painel'));
+const Produtos = lazy(() => import('./Pages/Produtos/Produtos'));
+const Clientes = lazy(() => import('./Pages/Clientes/Clientes'));
+const Pedidos = lazy(() => import('./Pages/Pedidos/Pedidos'));
+const NovoPedido = lazy(() => import('./Pages/Pedidos/NovoPedido'));
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/cadastro-cliente" element={<CadastroCliente />} />
-          <Route path="/fale-conosco" element={<FaleConosco />} />
+      <Suspense fallback={<div>Carregando...</div>}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/cadastro-cliente" element={<CadastroCliente />} />
+            <Route path="/fale-conosco" element={<FaleConosco />} />
 
-          <Route element={<LayoutPainel />}>
-            <Route path="/painel" element={<Painel />} />
-            <Route path="/produtos" element={<Produtos />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/pedidos" element={<Pedidos />} />
-            <Route path="/pedidos/novo" element={<NovoPedido />} />
+            <Route element={<LayoutPainel />}>
+              <Route path="/painel" element={<Painel />} />
+              <Route path="/produtos" element={<Produtos />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/pedidos" element={<Pedidos />} />
+              <Route path="/pedidos/novo" element={<NovoPedido />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

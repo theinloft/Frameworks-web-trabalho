@@ -1,0 +1,41 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.container input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.lista {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+
+  width: 100%;
+  background: #1b1b1b;
+  color: #fff;
+
+  border: 1px solid #333;
+  border-radius: 4px;
+
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  max-height: 220px;
+  overflow-y: auto;
+
+  z-index: 9999;
+}
+.lista li {
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.lista li:hover {
+  background: #f5c800;
+  color: #111;
+}

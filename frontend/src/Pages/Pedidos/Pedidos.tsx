@@ -29,6 +29,7 @@ type Pedido = {
 type Cliente = {
   id: string;
   nome: string;
+  email: string;
 };
 
 const statusCor: Record<string, string> = {

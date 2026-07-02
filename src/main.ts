@@ -12,7 +12,6 @@ async function bootstrap() {
     .setTitle('Ecommerce')
     .setDescription('API Ecommerce')
     .setVersion('1.0')
-    .addServer('http://localhost:3000')
     .addBearerAuth()
     .build();
 
@@ -23,8 +22,13 @@ async function bootstrap() {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
+
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? [
+    'http://localhost:5173',
+  ];
+
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });

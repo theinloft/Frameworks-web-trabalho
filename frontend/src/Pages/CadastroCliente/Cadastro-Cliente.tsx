@@ -18,7 +18,7 @@ export default function CadastroUsuario() {
     setCarregando(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/usuarios/cadastro`, {
+      const res = await fetch(`${API_URL}/api/usuario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -30,7 +30,7 @@ export default function CadastroUsuario() {
         return;
       }
 
-      const resLogin = await fetch(`${API_URL}/api/usuarios/login`, {
+      const resLogin = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, senha: form.senha }),

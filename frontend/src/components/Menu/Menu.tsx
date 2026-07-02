@@ -117,7 +117,9 @@ function Menu() {
         <div className="menu-mobile">
           <ul>
             <li>TUTORIAIS</li>
-            <li>CASE DE CLIENTES</li>
+            <li>
+              <Link to={'/cases-clientes'}>CASE DE CLIENTES</Link>{' '}
+            </li>
             <li>
               <Link to={'/fale-conosco'}>FALE CONOSCO</Link>
             </li>

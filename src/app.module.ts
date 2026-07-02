@@ -30,7 +30,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
         autoLoadEntities: true,
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        synchronize: true,
         entities: [Produto, Categoria, Cliente, Usuario],
         ssl:
           configService.get<string>('NODE_ENV') === 'production'

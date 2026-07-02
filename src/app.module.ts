@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { ProdutoModule } from './produto/produto.module';
 import { Categoria } from './categoria/entities/categoria.entity';
@@ -15,16 +16,27 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '123456',
-      database: 'Ecommerce_FW',
-      autoLoadEntities: true,
-      synchronize: true,
-      entities: [Produto, Categoria, Cliente, Usuario],
+    ConfigModule.forRoot({
+      isGlobal: true, // deixa as env vars disponíveis em toda a aplicação
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_USER'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
+        autoLoadEntities: true,
+        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        entities: [Produto, Categoria, Cliente, Usuario],
+        ssl:
+          configService.get<string>('NODE_ENV') === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
+      }),
     }),
     ThrottlerModule.forRoot([
       {
@@ -32,17 +44,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 200,
       },
     ]),
-
     ProdutoModule,
-
     CategoriaModule,
-
     ClienteModule,
-
     PedidoModule,
-
     UsuarioModule,
-
     AuthModule,
   ],
 })

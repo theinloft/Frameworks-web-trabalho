@@ -13,7 +13,9 @@ const Painel = lazy(() => import('./Pages/Painel/Painel'));
 const Produtos = lazy(() => import('./Pages/Produtos/Produtos'));
 const Clientes = lazy(() => import('./Pages/Clientes/Clientes'));
 const Pedidos = lazy(() => import('./Pages/Pedidos/Pedidos'));
+const Categorias = lazy(() => import('./Pages/Categoria/Categoria'));
 const NovoPedido = lazy(() => import('./Pages/Pedidos/NovoPedido'));
+const GaleriaCases = lazy(() => import('./Pages/CaseClientes/CaseClientes'));
 
 function App() {
   return (
@@ -25,12 +27,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cadastro-cliente" element={<CadastroCliente />} />
             <Route path="/fale-conosco" element={<FaleConosco />} />
+ <Route path="/cases-clientes" element={<GaleriaCases />} />
 
             <Route element={<LayoutPainel />}>
               <Route path="/painel" element={<Painel />} />
               <Route path="/produtos" element={<Produtos />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/pedidos" element={<Pedidos />} />
+              <Route path="/categorias" element={<Categorias />} />
               <Route path="/pedidos/novo" element={<NovoPedido />} />
             </Route>
           </Route>

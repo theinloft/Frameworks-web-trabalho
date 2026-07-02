@@ -52,12 +52,16 @@ function Menu() {
           </button>
         </div>
 
-        <div className="logo">SHRED_LAB</div>
+        <div className="logo">
+          <Link to={"/"}>SHRED_LAB</Link>
+        </div>
 
         <div className="lista">
           <ul className="nav-links">
             <li>TUTORIAIS</li>
-            <li>CASE DE CLIENTES</li>
+            <li>
+              <Link to={"/cases-clientes"}>CASE DE CLIENTES</Link>{" "}
+            </li>
             <li>
               <Link to={"/fale-conosco"}>FALE CONOSCO</Link>
             </li>
@@ -86,6 +90,15 @@ function Menu() {
                   }}
                 >
                   SAIR
+                </button>
+                <button
+                  className="perfil-sair"
+                  onClick={() => {
+                    setPerfilAberto(false);
+                    window.location.href = "/painel";
+                  }}
+                >
+                  PAINEL
                 </button>
               </div>
             )}

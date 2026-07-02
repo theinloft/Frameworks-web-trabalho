@@ -18,7 +18,7 @@ export function Footer() {
                             <a href="https://www.facebook.com"><IonIcon className="facebook" name="logo-facebook"></IonIcon></a>
                         </li>
                         <li>
-                            <a href="https://www.x.com"><IonIcon className="twitter" name="logo-twitter"></IonIcon></a>
+                            <a href="https://www.pinterest.com"><IonIcon className="pinterest" name="logo-pinterest"></IonIcon></a>
                         </li>
                         <li>
                             <a href="https://www.instagram.com"><IonIcon className="instagram" name="logo-instagram"></IonIcon></a>

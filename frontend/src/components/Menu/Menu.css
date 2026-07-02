@@ -16,6 +16,12 @@
   margin-left: 20px;
 }
 
+.logo a{
+  text-decoration: none;
+  color: #f5c800
+
+}
+
 .material-icons {
   color: #ffffff;
   font-size: 15px;

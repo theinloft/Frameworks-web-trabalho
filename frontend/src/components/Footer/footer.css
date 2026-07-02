@@ -65,7 +65,7 @@
 }
 
 .facebook,
-.twitter,
+.pinterest,
 .instagram,
 .google{
 	transition: color 0.2s, transform 0.3s;
@@ -78,8 +78,8 @@
 
 }
 
-.twitter:hover{
-	color: #00ACED;
+.pinterest:hover{
+	color: red;
 	transform: translateY(-10px);
 
 }

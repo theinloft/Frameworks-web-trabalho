@@ -1,0 +1,70 @@
+.projects {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.project {
+    width: 25%;
+    height: 300px;
+    position: relative;
+
+}
+
+.projects a {
+    text-decoration: none;
+    color: #fff;
+    -webkit-text-stroke-width: 2px;
+    /* Espessura da borda */
+    -webkit-text-stroke-color: #000;
+    /* Cor preta da borda */
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.project img {
+    width: 100%;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.project p {
+    position: absolute;
+    font-size: 3.5rem;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.projects .project:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 1290px) {
+    .project p{
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 950px) {
+    .project p{
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .project {
+        width: 50%;
+        height: 200px;
+    }
+
+    .project p{
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 470px) {
+    .project {
+        width: 100%;
+    }
+}

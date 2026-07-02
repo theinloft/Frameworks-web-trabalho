@@ -1,10 +1,36 @@
 .hero {
   position: relative;
   width: 100%;
-  height: 90vh;
+  height: 80vh;
   overflow: hidden;
   font-family: "Arial Black", Arial, sans-serif;
 }
+
+.titulo{
+  margin-left: 15px;
+}
+
+.hero .tag{
+  margin-left: 30px;
+}
+
+.hero:after{
+    content:"";
+    background: url('./icon/arrow-down-solid.svg') center center no-repeat;
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 10px;
+    right: 50%;
+    animation: downarrow 0.6s infinite alternate ease-in-out;
+}
+
+@-webkit-keyframes downarrow{
+    0% { -webkit-transform: translateY(0); opacity: 0.4;}
+    100% { -webkit-transform: translateY(0.4em); opacity: 0.9;}
+}
+
 
 .bg {
   position: absolute;
@@ -40,7 +66,7 @@
   }
 
   .hero {
-    height: 100svh; /* usa svh no mobile para descontar a barra do browser */
+    height: 80svh; /* usa svh no mobile para descontar a barra do browser */
   }
 
   .content {
@@ -48,7 +74,7 @@
   }
 
   .titulo {
-    font-size: clamp(36px, 10vw, 60px);
+    font-size: clamp(30px, 10vw, 50px);
   }
 
   .btnGroup {
@@ -64,7 +90,7 @@
 
   .titulo {
     /* font-size: clamp(28px, 12vw, 48px); */
-    font-size: clamp(22px, 10vw, 40px);
+    font-size: clamp(15px, 10vw, 30px);
     line-height: 1;
     letter-spacing: -1px;
     overflow-wrap: break-word;
@@ -101,13 +127,14 @@
 }
 
 .titulo {
-  font-size: clamp(48px, 8vw, 96px);
+  font-size: clamp(35px, 8vw, 70px);
   font-weight: 900;
   color: #fff;
   line-height: 0.9;
   text-transform: uppercase;
   letter-spacing: -2px;
   margin-bottom: 32px;
+  margin-left: 25px;
 }
 
 .destaque {

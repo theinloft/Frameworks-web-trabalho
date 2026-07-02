@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './cadastro-cliente.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./cadastro-cliente.css";
 
 export default function CadastroUsuario() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nome: '', email: '', senha: '' });
-  const [erro, setErro] = useState('');
+  const [form, setForm] = useState({ nome: "", email: "", senha: "" });
+  const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
   function atualizar(campo: string, valor: string) {
@@ -13,41 +13,39 @@ export default function CadastroUsuario() {
   }
 
   async function cadastrar() {
-    setErro('');
+    setErro("");
     setCarregando(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/usuario', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("http://localhost:3000/api/usuarios/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        setErro(
-          Array.isArray(data.message)
-            ? data.message.join(', ')
-            : data.message || 'Erro ao cadastrar.',
-        );
+        setErro(data.message || "Erro ao cadastrar.");
         return;
       }
 
-      const loginRes = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const resLogin = await fetch("http://localhost:3000/api/usuarios/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: form.email, senha: form.senha }),
       });
 
-      if (loginRes.ok) {
-        const { token } = await loginRes.json();
-        localStorage.setItem('token', token);
-        navigate('/painel');
+      const dataLogin = await resLogin.json();
+
+      if (resLogin.ok) {
+        localStorage.setItem("token", dataLogin.token);
+        window.dispatchEvent(new Event("storage"));
+        navigate("/painel");
       } else {
-        navigate('/login');
+        navigate("/login");
       }
     } catch {
-      setErro('Não foi possível conectar ao servidor.');
+      setErro("Não foi possível conectar ao servidor.");
     } finally {
       setCarregando(false);
     }
@@ -65,7 +63,7 @@ export default function CadastroUsuario() {
             type="text"
             className="input"
             value={form.nome}
-            onChange={(e) => atualizar('nome', e.target.value)}
+            onChange={(e) => atualizar("nome", e.target.value)}
           />
         </div>
 
@@ -75,7 +73,7 @@ export default function CadastroUsuario() {
             type="email"
             className="input"
             value={form.email}
-            onChange={(e) => atualizar('email', e.target.value)}
+            onChange={(e) => atualizar("email", e.target.value)}
           />
         </div>
 
@@ -85,7 +83,7 @@ export default function CadastroUsuario() {
             type="password"
             className="input"
             value={form.senha}
-            onChange={(e) => atualizar('senha', e.target.value)}
+            onChange={(e) => atualizar("senha", e.target.value)}
           />
         </div>
 
@@ -97,10 +95,10 @@ export default function CadastroUsuario() {
           onClick={cadastrar}
           disabled={carregando}
         >
-          {carregando ? 'CADASTRANDO...' : 'CADASTRAR'}
+          {carregando ? "CADASTRANDO..." : "CADASTRAR"}
         </button>
 
-        <button type="button" className="btn" onClick={() => navigate('/')}>
+        <button type="button" className="btn" onClick={() => navigate("/")}>
           VOLTAR
         </button>
       </div>

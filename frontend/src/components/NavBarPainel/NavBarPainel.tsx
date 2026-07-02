@@ -44,6 +44,16 @@ export default function NavbarPainel() {
           PRODUTOS
         </NavLink>
         <NavLink
+          to="/categorias"
+          className={({ isActive }) =>
+            isActive ? `${styles.link} ${styles.ativo}` : styles.link
+          }
+          onClick={() => setMenuAberto(false)}
+        >
+          CATEGORIAS
+        </NavLink>
+
+        <NavLink
           to="/clientes"
           className={({ isActive }) =>
             isActive ? `${styles.link} ${styles.ativo}` : styles.link

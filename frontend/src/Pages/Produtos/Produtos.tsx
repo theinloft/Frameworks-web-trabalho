@@ -5,6 +5,7 @@ import { useApi } from '../../hooks/useApi';
 import Modal from '../../components/Modal/Modal';
 import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
 import { useState } from 'react';
+import { API_URL } from '../../config/api';
 
 const POR_PAGINA = 5;
 
@@ -34,12 +35,10 @@ export default function Produtos() {
 
   const [form, setForm] = useState({ nome: '', preco: 0, categoriaId: 0 });
 
-  const { data: categorias } = useApi<Categoria[]>(
-    'http://localhost:3000/api/categoria',
-  );
+  const { data: categorias } = useApi<Categoria[]>(`${API_URL}/api/categoria`);
 
   const { data: produtos, setData: setProdutos } = useApi<Produto[]>(
-    'http://localhost:3000/api/produto',
+    `${API_URL}/api/produto`,
   );
 
   const camposProduto = [
@@ -81,7 +80,7 @@ export default function Produtos() {
     }
     setErro('');
 
-    await fetch(`http://localhost:3000/api/produto/${editando.id}`, {
+    await fetch(`${API_URL}/api/produto/${editando.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -98,7 +97,7 @@ export default function Produtos() {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `http://localhost:3000/api/produto/${editando.id}/imagem`, // URL corrigida
+        `${API_URL}/api/produto/${editando.id}/imagem`, // URL corrigida
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -117,7 +116,7 @@ export default function Produtos() {
   }
 
   async function excluir(id: string) {
-    await fetch(`http://localhost:3000/api/produto/${id}`, {
+    await fetch(`${API_URL}/api/produto/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -140,7 +139,7 @@ export default function Produtos() {
     }
     setErro('');
 
-    const res = await fetch('http://localhost:3000/api/produto', {
+    const res = await fetch(`${API_URL}/api/produto`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -162,7 +161,7 @@ export default function Produtos() {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `http://localhost:3000/api/produto/${novo.id}/imagem`, // URL corrigida
+        `${API_URL}/api/produto/${novo.id}/imagem`, // URL corrigida
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -286,7 +285,7 @@ export default function Produtos() {
             {visualizando.imagem ? (
               <img
                 className={styles.lightboxImagem}
-                src={`http://localhost:3000/my-uploads/${visualizando.imagem}`} // URL corrigida
+                src={`${API_URL}/my-uploads/${visualizando.imagem}`}
                 alt={visualizando.nome}
               />
             ) : (

@@ -1,5 +1,12 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import styles from "./GraficoPedidosStatus.module.css";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts';
+import styles from './GraficoPedidosStatus.module.css';
 
 type Pedido = {
   status: string;
@@ -9,13 +16,22 @@ type Props = {
   pedidos: Pedido[];
 };
 
-const CORES = ["#f5c800", "#4caf50", "#ff5050"];
+const CORES = ['#f5c800', '#4caf50', '#ff5050'];
 
 export default function GraficoPedidosStatus({ pedidos }: Props) {
   const dados = [
-    { name: "Andamento", value: pedidos.filter((p) => p.status === "andamento").length },
-    { name: "Concluído", value: pedidos.filter((p) => p.status === "concluido").length },
-    { name: "Cancelado", value: pedidos.filter((p) => p.status === "cancelado").length },
+    {
+      name: 'Andamento',
+      value: pedidos.filter((p) => p.status === 'andamento').length,
+    },
+    {
+      name: 'Concluído',
+      value: pedidos.filter((p) => p.status === 'concluido').length,
+    },
+    {
+      name: 'Cancelado',
+      value: pedidos.filter((p) => p.status === 'cancelado').length,
+    },
   ];
 
   return (

@@ -6,6 +6,10 @@ import { useApi } from '../../hooks/useApi';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import GraficoPedidosStatus from '../../components/GraficoPedidosStatus/GraficoPedidosStatus';
+
+import { API_URL } from '../../config/api';
+
 type Cliente = {
   id: string;
   nome: string;
@@ -21,6 +25,7 @@ type Produto = {
 type Pedido = {
   id: string;
   horarioPedido: string;
+  status: 'andamento' | 'concluido' | 'cancelado';
 };
 
 const POR_PAGINA = 5;
@@ -37,15 +42,9 @@ export default function Painel() {
     return lista.slice(inicio, inicio + POR_PAGINA);
   }
 
-  const { data: clientes } = useApi<Cliente[]>(
-    'http://localhost:3000/api/cliente',
-  );
-  const { data: produtos } = useApi<Produto[]>(
-    'http://localhost:3000/api/produto',
-  );
-  const { data: pedidos } = useApi<Pedido[]>(
-    'http://localhost:3000/api/pedido',
-  );
+  const { data: clientes } = useApi<Cliente[]>(`${API_URL}/api/cliente`);
+  const { data: produtos } = useApi<Produto[]>(`${API_URL}/api/produto`);
+  const { data: pedidos } = useApi<Pedido[]>(`${API_URL}/api/pedido`);
 
   return (
     <div className={styles.page}>
@@ -88,6 +87,8 @@ export default function Painel() {
           <span className={styles.kpiLabel}>PRODUTOS</span>
         </div>
       </div>
+
+      {pedidos && <GraficoPedidosStatus pedidos={pedidos} />}
 
       {/* Grid principal */}
       <div className={styles.grid}>

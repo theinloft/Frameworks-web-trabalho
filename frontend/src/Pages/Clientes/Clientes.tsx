@@ -5,6 +5,7 @@ import { useApi } from '../../hooks/useApi';
 import Paginacao from '../../components/Paginacao/Paginacao';
 import styles from './Clientes.module.css';
 import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
+import { API_URL } from '../../config/api';
 
 const POR_PAGINA = 5;
 
@@ -26,7 +27,7 @@ export default function Clientes() {
   const [form, setForm] = useState({ nome: '', email: '' });
 
   const { data: clientes, setData: setClientes } = useApi<Cliente[]>(
-    'http://localhost:3000/api/cliente',
+    `${API_URL}/api/cliente`,
   );
 
   const camposClientes = [
@@ -46,7 +47,7 @@ export default function Clientes() {
       return;
     }
     setErro('');
-    await fetch(`http://localhost:3000/api/cliente/${editando.id}`, {
+    await fetch(`${API_URL}/api/cliente/${editando.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ export default function Clientes() {
   }
 
   async function excluir(id: string) {
-    await fetch(`http://localhost:3000/api/cliente/${id}`, {
+    await fetch(`${API_URL}/api/cliente/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -77,7 +78,7 @@ export default function Clientes() {
       return;
     }
     setErro('');
-    const res = await fetch('http://localhost:3000/api/cliente', {
+    const res = await fetch(`${API_URL}/api/cliente`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

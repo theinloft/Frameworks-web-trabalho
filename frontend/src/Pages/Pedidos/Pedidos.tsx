@@ -3,12 +3,12 @@ import styles from './Pedidos.module.css';
 import { useApi } from '../../hooks/useApi';
 import Paginacao from '../../components/Paginacao/Paginacao';
 import { paginar } from '../../utils/utils';
-import Modal from '../../components/Modal/Modal';
 import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import ModalDetalhesPedido from '../../components/ModalDetalhesPedido/modalDetalhesPedido';
+import { API_URL } from '../../config/api';
 
 const POR_PAGINA = 5;
 
@@ -26,6 +26,11 @@ type Pedido = {
   status: string;
 };
 
+type Cliente = {
+  id: string;
+  nome: string;
+};
+
 const statusCor: Record<string, string> = {
   andamento: '#f5c800',
   concluido: '#4caf50',
@@ -33,22 +38,12 @@ const statusCor: Record<string, string> = {
 };
 
 export default function Pedido() {
-  const [erro, setErro] = useState('');
   const [pagPedidos, setPagProdutos] = useState(1);
-  const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null);
-  const [confirmarAcao, setConfirmarAcao] = useState<{
-    id: string;
-    status: 'andamento' | 'concluido' | 'cancelado';
-  } | null>(null);
 
   const [visualizando, setVisualizando] = useState<Pedido | null>(null);
 
   const { data: pedidos, setData: setPedidos } = useApi<Pedido[]>(
-    'http://localhost:3000/api/pedido',
-  );
-
-  const { data: produtos, setData: setProdutos } = useApi<Produto[]>(
-    'http://localhost:3000/api/produto',
+    `${API_URL}/api/pedido`,
   );
 
   const navigate = useNavigate();
@@ -66,7 +61,7 @@ export default function Pedido() {
     id: string,
     status: 'andamento' | 'concluido' | 'cancelado',
   ) {
-    await fetch(`http://localhost:3000/api/pedido/atualizar-status/${id}`, {
+    await fetch(`${API_URL}/api/pedido/atualizar-status/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

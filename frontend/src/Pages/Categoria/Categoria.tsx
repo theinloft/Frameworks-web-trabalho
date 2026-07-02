@@ -5,6 +5,7 @@ import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
 import Modal from '../../components/Modal/Modal';
 import { useApi } from '../../hooks/useApi';
 import { paginar } from '../../utils/utils';
+import { API_URL } from '../../config/api';
 
 const POR_PAGINA = 5;
 
@@ -25,7 +26,7 @@ export default function Categoria() {
   const [form, setForm] = useState({ categoria: '' });
 
   const { data: categorias, setData: setCategorias } = useApi<Categoria[]>(
-    'http://localhost:3000/api/categoria',
+    `${API_URL}/api/categoria`,
   );
 
   const camposCategoria = [{ label: 'Categoria', chave: 'categoria' }];
@@ -42,7 +43,7 @@ export default function Categoria() {
       return;
     }
     setErro('');
-    await fetch(`http://localhost:3000/api/categoria/${editando.id}`, {
+    await fetch(`${API_URL}/api/categoria/${editando.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export default function Categoria() {
   }
 
   async function excluir(id: string) {
-    await fetch(`http://localhost:3000/api/categoria/${id}`, {
+    await fetch(`${API_URL}/api/categoria/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -73,7 +74,7 @@ export default function Categoria() {
       return;
     }
     setErro('');
-    const res = await fetch('http://localhost:3000/api/categoria', {
+    const res = await fetch(`${API_URL}/api/categoria`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

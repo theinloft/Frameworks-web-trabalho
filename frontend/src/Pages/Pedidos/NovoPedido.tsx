@@ -4,6 +4,7 @@ import styles from './NovoPedido.module.css';
 import Modal from '../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import BuscaAutoCompletar from '../../components/BuscaAutoCompletar/BuscaAutoCompletar';
+import { API_URL } from '../../config/api';
 
 type Cliente = {
   id: string;
@@ -37,9 +38,7 @@ export default function NovoPedido() {
   );
   const token = localStorage.getItem('token');
 
-  const { data: produtos } = useApi<ProdutoItem[]>(
-    'http://localhost:3000/api/produto', // corrigido: singular
-  );
+  const { data: produtos } = useApi<ProdutoItem[]>(`${API_URL}/api/produto`);
   const camposClientes = [
     { label: 'NOME', chave: 'nome' },
     { label: 'EMAIL', chave: 'email', tipo: 'email' },
@@ -49,7 +48,7 @@ export default function NovoPedido() {
     data: clientes,
     erro: erroClientes,
     setData: setClientes,
-  } = useApi<Cliente[]>('http://localhost:3000/api/cliente'); // corrigido: singular
+  } = useApi<Cliente[]>(`${API_URL}/api/cliente`);
 
   console.log('erroClientes:', erroClientes);
 
@@ -92,8 +91,7 @@ export default function NovoPedido() {
       return;
     }
     setErro('');
-    await fetch('http://localhost:3000/api/pedido', {
-      // corrigido: singular
+    await fetch(`${API_URL}/api/pedido`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,8 +118,7 @@ export default function NovoPedido() {
       return;
     }
     setErro('');
-    const res = await fetch('http://localhost:3000/api/cliente', {
-      // corrigido: singular
+    const res = await fetch(`${API_URL}/api/cliente`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

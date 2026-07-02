@@ -1,4 +1,4 @@
-import styles from './ModalDetalhesPedido.module.css';
+import styles from './modalDetalhesPedido.module.css';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { API_URL } from '../../config/api';

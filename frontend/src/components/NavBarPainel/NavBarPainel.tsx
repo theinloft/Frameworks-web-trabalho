@@ -1,15 +1,9 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import styles from "./NavbarPainel.module.css";
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import styles from './NavbarPainel.module.css';
 
 export default function NavbarPainel() {
-  const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
-
-  function sair() {
-    localStorage.removeItem("token");
-    navigate("/login");
-  }
 
   return (
     <nav className={styles.nav}>
@@ -20,11 +14,11 @@ export default function NavbarPainel() {
         className={styles.hamburguer}
         onClick={() => setMenuAberto((prev) => !prev)}
       >
-        {menuAberto ? "✕" : "☰"}
+        {menuAberto ? '✕' : '☰'}
       </button>
 
       {/* links — desktop sempre visível, mobile só quando aberto */}
-      <div className={`${styles.links} ${menuAberto ? styles.aberto : ""}`}>
+      <div className={`${styles.links} ${menuAberto ? styles.aberto : ''}`}>
         <NavLink
           to="/painel"
           className={({ isActive }) =>

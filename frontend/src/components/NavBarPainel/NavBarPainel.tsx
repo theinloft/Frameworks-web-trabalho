@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import styles from './NavbarPainel.module.css';
+import styles from './NavBarPainel.module.css';
 
 export default function NavbarPainel() {
   const [menuAberto, setMenuAberto] = useState(false);

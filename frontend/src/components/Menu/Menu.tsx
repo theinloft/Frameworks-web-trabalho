@@ -1,18 +1,21 @@
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import "./Menu.css";
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import './Menu.css';
+import { useNavigate } from 'react-router-dom';
+
 function Menu() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleStorage() {
-      setToken(localStorage.getItem("token"));
+      setToken(localStorage.getItem('token'));
     }
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   useEffect(() => {
@@ -21,8 +24,8 @@ function Menu() {
         setMenuAberto(false);
       }
     }
-    document.addEventListener("click", handleClickFora);
-    return () => document.removeEventListener("click", handleClickFora);
+    document.addEventListener('click', handleClickFora);
+    return () => document.removeEventListener('click', handleClickFora);
   }, []);
 
   useEffect(() => {
@@ -32,8 +35,8 @@ function Menu() {
         setMenuAberto(false);
       }
     }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
@@ -53,17 +56,17 @@ function Menu() {
         </div>
 
         <div className="logo">
-          <Link to={"/"}>SHRED_LAB</Link>
+          <Link to={'/'}>SHRED_LAB</Link>
         </div>
 
         <div className="lista">
           <ul className="nav-links">
             <li>TUTORIAIS</li>
             <li>
-              <Link to={"/cases-clientes"}>CASE DE CLIENTES</Link>{" "}
+              <Link to={'/cases-clientes'}>CASE DE CLIENTES</Link>{' '}
             </li>
             <li>
-              <Link to={"/fale-conosco"}>FALE CONOSCO</Link>
+              <Link to={'/fale-conosco'}>FALE CONOSCO</Link>
             </li>
           </ul>
         </div>
@@ -83,10 +86,10 @@ function Menu() {
                 <button
                   className="perfil-sair"
                   onClick={() => {
-                    localStorage.removeItem("token");
+                    localStorage.removeItem('token');
                     setToken(null);
                     setPerfilAberto(false);
-                    window.location.href = "/login";
+                    window.location.href = '/login';
                   }}
                 >
                   SAIR
@@ -95,7 +98,7 @@ function Menu() {
                   className="perfil-sair"
                   onClick={() => {
                     setPerfilAberto(false);
-                    window.location.href = "/painel";
+                    navigate('/painel');
                   }}
                 >
                   PAINEL
@@ -116,7 +119,7 @@ function Menu() {
             <li>TUTORIAIS</li>
             <li>CASE DE CLIENTES</li>
             <li>
-              <Link to={"/fale-conosco"}>FALE CONOSCO</Link>
+              <Link to={'/fale-conosco'}>FALE CONOSCO</Link>
             </li>
           </ul>
         </div>

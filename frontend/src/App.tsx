@@ -15,6 +15,7 @@ const Clientes = lazy(() => import('./Pages/Clientes/Clientes'));
 const Pedidos = lazy(() => import('./Pages/Pedidos/Pedidos'));
 const Categorias = lazy(() => import('./Pages/Categoria/Categoria'));
 const NovoPedido = lazy(() => import('./Pages/Pedidos/NovoPedido'));
+const EditarPedido = lazy(() => import('./Pages/Pedidos/EditarPedido'));
 const GaleriaCases = lazy(() => import('./Pages/CaseClientes/CaseClientes'));
 
 function App() {
@@ -27,7 +28,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cadastro-cliente" element={<CadastroCliente />} />
             <Route path="/fale-conosco" element={<FaleConosco />} />
- <Route path="/cases-clientes" element={<GaleriaCases />} />
+            <Route path="/cases-clientes" element={<GaleriaCases />} />
 
             <Route element={<LayoutPainel />}>
               <Route path="/painel" element={<Painel />} />
@@ -36,6 +37,7 @@ function App() {
               <Route path="/pedidos" element={<Pedidos />} />
               <Route path="/categorias" element={<Categorias />} />
               <Route path="/pedidos/novo" element={<NovoPedido />} />
+              <Route path="/pedidos/editar/:id" element={<EditarPedido />} />
             </Route>
           </Route>
         </Routes>

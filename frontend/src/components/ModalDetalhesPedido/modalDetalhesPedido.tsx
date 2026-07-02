@@ -1,34 +1,8 @@
 import styles from './ModalDetalhesPedido.module.css';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-
-type Produto = {
-  id: string;
-  nome: string;
-  preco: number;
-  imagem?: string | null;
-};
-
-type Item = {
-  id: string;
-  quantidade: number;
-  precoUnitario: number;
-  produto?: Produto;
-};
-
-type Cliente = {
-  id: string;
-  nome: string;
-  email: string;
-};
-
-type Pedido = {
-  id: string;
-  horarioPedido: string;
-  status: string;
-  cliente?: Cliente;
-  itens: Item[];
-};
+import { API_URL } from '../../config/api';
+import type { Pedido } from '../../types/pedido';
 
 type Props = {
   pedido: Pedido;
@@ -81,7 +55,7 @@ export default function ModalDetalhesPedido({ pedido, onFechar }: Props) {
                 {item.produto?.imagem ? (
                   <img
                     className={styles.itemImagem}
-                    src={`http://localhost:3000/my-uploads/${item.produto.imagem}`}
+                    src={`${API_URL}/my-uploads/${item.produto.imagem}`}
                     alt={item.produto.nome}
                   />
                 ) : (

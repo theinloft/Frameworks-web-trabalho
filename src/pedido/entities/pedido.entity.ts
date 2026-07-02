@@ -38,6 +38,7 @@ export class Pedido {
   @OneToMany(() => PedidoItem, (item) => item.pedido, {
     cascade: true,
     eager: true,
+    orphanedRowAction: 'delete',
   })
   itens!: PedidoItem[];
 }

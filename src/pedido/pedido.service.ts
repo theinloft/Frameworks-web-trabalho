@@ -101,6 +101,8 @@ export class PedidoService {
     }
 
     if (dto.itens) {
+      const novosItens: PedidoItem[] = [];
+
       for (const itemDto of dto.itens) {
         const produto = await this.produtoRepo.findOneBy({
           id: itemDto.produtoId,
@@ -117,21 +119,22 @@ export class PedidoService {
         );
 
         if (itemExistente) {
-          itemExistente.quantidade += itemDto.quantidade;
-
+          itemExistente.quantidade = itemDto.quantidade;
           itemExistente.precoUnitario = produto.preco!;
+          novosItens.push(itemExistente);
         } else {
           const novoItem = new PedidoItem();
 
           novoItem.produto = produto;
           novoItem.quantidade = itemDto.quantidade;
           novoItem.precoUnitario = produto.preco!;
-
           novoItem.pedido = pedido;
 
-          pedido.itens.push(novoItem);
+          novosItens.push(novoItem);
         }
       }
+
+      pedido.itens = novosItens;
     }
 
     pedido.valorTotal = Number(
@@ -142,6 +145,8 @@ export class PedidoService {
         )
         .toFixed(2),
     );
+
+    pedido.status = StatusPedido.ANDAMENTO;
 
     const pedidoSalvo = await this.pedidoRepo.save(pedido);
     return this.toResponse(pedidoSalvo);

@@ -9,28 +9,9 @@ import { ptBR } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import ModalDetalhesPedido from '../../components/ModalDetalhesPedido/modalDetalhesPedido';
 import { API_URL } from '../../config/api';
+import type { Pedido } from '../../types/pedido';
 
 const POR_PAGINA = 5;
-
-type Produto = {
-  id: string;
-  nome: string;
-  qtde: number;
-};
-
-type Pedido = {
-  id: string;
-  cliente?: Cliente;
-  horarioPedido: string;
-  itens: Produto[];
-  status: string;
-};
-
-type Cliente = {
-  id: string;
-  nome: string;
-  email: string;
-};
 
 const statusCor: Record<string, string> = {
   andamento: '#f5c800',

@@ -37,7 +37,7 @@ export default function Produtos() {
 
   const { data: categorias } = useApi<Categoria[]>(`${API_URL}/api/categoria`);
 
-  const { data: produtos, setData: setProdutos } = useApi<Produto[]>(
+  const { data: produtos, refetch: refetchProdutos } = useApi<Produto[]>(
     `${API_URL}/api/produto`,
   );
 
@@ -106,11 +106,9 @@ export default function Produtos() {
       );
     }
 
-    setProdutos((prev) =>
-      prev
-        ? prev.map((p) => (p.id === editando.id ? { ...p, ...form } : p))
-        : prev,
-    );
+    await refetchProdutos();
+    setEditando(null);
+    setImagem(null);
     setEditando(null);
     setImagem(null);
   }
@@ -120,7 +118,7 @@ export default function Produtos() {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
-    setProdutos((prev) => (prev ? prev.filter((p) => p.id !== id) : prev));
+    await refetchProdutos();
     setConfirmarExcluir(null);
   }
 
@@ -152,7 +150,7 @@ export default function Produtos() {
       }),
     });
     const novo = (await res.json()) as Produto;
-    setProdutos((prev) => (prev ? [...prev, novo] : [novo]));
+    await refetchProdutos();
     setCriando(false);
     setImagem(null);
     setForm({ nome: '', preco: 0, categoriaId: 0 });

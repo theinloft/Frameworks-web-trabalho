@@ -29,15 +29,25 @@ export class ProdutoService {
       },
     });
 
-    return this.produtoRepo.save(produto);
+    const salvo = await this.produtoRepo.save(produto);
+
+    return this.produtoRepo.findOneOrFail({
+      where: { id: salvo.id },
+      relations: ['categoria'],
+    });
   }
 
   async findAll() {
-    return this.produtoRepo.find();
+    return this.produtoRepo.find({
+      relations: ['categoria'],
+    });
   }
 
   async findOne(id: string) {
-    return this.produtoRepo.findOneByOrFail({ id });
+    return this.produtoRepo.findOneOrFail({
+      where: { id },
+      relations: ['categoria'],
+    });
   }
 
   async update(id: string, updateProdutoDto: UpdateProdutoDto) {

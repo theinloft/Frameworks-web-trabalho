@@ -8,6 +8,7 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
+import { Perfil } from './enums/perfil.enum';
 
 @Injectable()
 export class UsuariosService {
@@ -21,7 +22,7 @@ export class UsuariosService {
     if (existe) throw new ConflictException('E-mail já cadastrado');
 
     const hash = await bcrypt.hash(dto.senha, 10);
-    const usuario = this.repo.create({ ...dto, senha: hash });
+    const usuario = this.repo.create({ ...dto, senha: hash, perfil: Perfil.USUARIO });
     return this.repo.save(usuario);
   }
 

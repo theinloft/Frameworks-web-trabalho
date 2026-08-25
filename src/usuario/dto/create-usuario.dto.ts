@@ -13,9 +13,4 @@ export class CreateUsuarioDto {
   @ApiProperty()
   @IsString()
   senha!: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  perfil?: string;
 }

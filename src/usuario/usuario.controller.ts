@@ -11,6 +11,10 @@ import { UsuariosService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorators';
+
+import { Perfil } from './enums/perfil.enum';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -23,7 +27,8 @@ export class UsuarioController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard,RolesGuard)
+  @Roles(Perfil.ADMIN_MASTER)
   @Get()
   @ApiOperation({ summary: 'lista todos os usuários' })
   findAll() {
@@ -31,7 +36,8 @@ export class UsuarioController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard,RolesGuard)
+  @Roles(Perfil.ADMIN_MASTER)
   @Get(':id')
   @ApiOperation({ summary: 'lista um usuário pelo ID' })
   findOne(@Param('id') id: string) {
@@ -39,7 +45,8 @@ export class UsuarioController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard,RolesGuard)
+  @Roles(Perfil.ADMIN_MASTER)
   @Delete(':id')
   @ApiOperation({ summary: 'remove um usuário  pelo ID' })
   remove(@Param('id') id: string) {

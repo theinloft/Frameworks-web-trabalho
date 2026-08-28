@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
@@ -28,16 +29,16 @@ export class CategoriaController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Erro de validaÃ§Ã£o',
+    description: 'Erro de validação',
   })
   @ApiResponse({
     status: 401,
-    description: 'NÃ£o autorizado',
+    description: 'Não autorizado',
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  async create(@Body() createCategoriaDto: CreateCategoriaDto) {
-    return this.categoriaService.create(createCategoriaDto);
+  async create(@Body() createCategoriaDto: CreateCategoriaDto, @Req() req) {
+    return this.categoriaService.create(createCategoriaDto, req.user);
   }
 
   @Get()
@@ -48,8 +49,10 @@ export class CategoriaController {
     status: 200,
     description: 'OK',
   })
-  findAll() {
-    return this.categoriaService.findAll();
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  findAll(@Req() req) {
+    return this.categoriaService.findAll(req.user);
   }
 
   @Get(':id')
@@ -62,12 +65,12 @@ export class CategoriaController {
   })
   @ApiResponse({
     status: 404,
-    description: 'NÃ£o encontrado',
+    description: 'Não encontrado',
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findOne(@Param('id') id: string) {
-    return this.categoriaService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.categoriaService.findOne(+id, req.user);
   }
 
   @Patch(':id')
@@ -80,15 +83,16 @@ export class CategoriaController {
   })
   @ApiResponse({
     status: 404,
-    description: 'NÃ£o encontrado',
+    description: 'Não encontrado',
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   update(
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
+    @Req() req,
   ) {
-    return this.categoriaService.update(+id, updateCategoriaDto);
+    return this.categoriaService.update(+id, updateCategoriaDto, req.user);
   }
 
   @Delete(':id')
@@ -101,11 +105,11 @@ export class CategoriaController {
   })
   @ApiResponse({
     status: 404,
-    description: 'NÃ£o encontrado',
+    description: 'Não encontrado',
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  remove(@Param('id') id: number) {
-    return this.categoriaService.remove(+id);
+  remove(@Param('id') id: string, @Req() req) {
+    return this.categoriaService.remove(+id, req.user);
   }
 }

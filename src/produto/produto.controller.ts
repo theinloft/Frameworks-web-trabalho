@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
@@ -41,8 +42,8 @@ export class ProdutoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  async create(@Body() createProdutoDto: CreateProdutoDto) {
-    return this.produtoService.create(createProdutoDto);
+  async create(@Body() createProdutoDto: CreateProdutoDto,@Req() req) {
+    return this.produtoService.create(createProdutoDto,req.user);
   }
 
   @Get()
@@ -55,8 +56,8 @@ export class ProdutoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findAll() {
-    return this.produtoService.findAll();
+  findAll(@Req() req) {
+    return this.produtoService.findAll(req.user);
   }
 
   @Get(':id')
@@ -73,8 +74,8 @@ export class ProdutoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findOne(@Param('id') id: string) {
-    return this.produtoService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.produtoService.findOne(id, req.user);
   }
 
   @Patch(':id')
@@ -91,8 +92,10 @@ export class ProdutoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
-    return this.produtoService.update(id, updateProdutoDto);
+  update(@Param('id') id: string,
+    @Body() updateProdutoDto: UpdateProdutoDto,
+    @Req() req,) {
+    return this.produtoService.update(id, updateProdutoDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -109,8 +112,8 @@ export class ProdutoController {
     status: 404,
     description: 'Não encontrado',
   })
-  remove(@Param('id') id: string) {
-    return this.produtoService.remove(id);
+  remove(@Param('id') id: string, @Req() req) {
+    return this.produtoService.remove(id,req.user);
   }
 
   @Post(':id/imagem')
@@ -121,8 +124,10 @@ export class ProdutoController {
     @Param('id') id: string,
     @UploadedFile()
     file: { filename: string; fieldname: string; originalname: string },
+    @Req() req,
   ) {
     if (!file) throw new BadRequestException('Nenhum arquivo enviado');
-    return this.produtoService.salvarImagem(id, file.filename);
+    return this.produtoService.salvarImagem(id, file.filename, req.user);
   }
 }
+

@@ -3,11 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PedidoItem } from './pedidoItem.entity';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 
 export enum StatusPedido {
   ANDAMENTO = 'andamento',
@@ -41,4 +43,12 @@ export class Pedido {
     orphanedRowAction: 'delete',
   })
   itens!: PedidoItem[];
+
+     @ManyToOne(() => Usuario, { nullable: false, eager: false })
+    @JoinColumn({ name: 'usuarioId' })
+    usuario!: Usuario;
+  
+    @Column()
+    usuarioId!: number;
+  
 }

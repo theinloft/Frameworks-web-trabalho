@@ -6,6 +6,8 @@ import { Produto } from './entities/produto.entity';
 import { Repository } from 'typeorm';
 import { Categoria } from 'src/categoria/entities/categoria.entity';
 import { ProdutoValidator } from './validators/produto.validator';
+import { Perfil } from '../usuario/enums/perfil.enum';
+
 
 @Injectable()
 export class ProdutoService {
@@ -16,9 +18,9 @@ export class ProdutoService {
 
     @InjectRepository(Categoria)
     private readonly categoriaRepo: Repository<Categoria>,
-  ) {}
+  ) { }
 
-  async create(dto: CreateProdutoDto) {
+  async create(dto: CreateProdutoDto,usuarioLogado: { id: number }) {
     await this.produtoValidator.validateProduto(dto);
 
     const produto = this.produtoRepo.create({
@@ -27,6 +29,7 @@ export class ProdutoService {
       categoria: {
         id: dto.categoriaId,
       },
+      usuarioId: usuarioLogado.id,
     });
 
     const salvo = await this.produtoRepo.save(produto);
@@ -37,20 +40,28 @@ export class ProdutoService {
     });
   }
 
-  async findAll() {
+  async findAll(usuarioLogado: { id: number; perfil: Perfil }) {
+    if (usuarioLogado.perfil === Perfil.ADMIN_MASTER) {
+      return this.produtoRepo.find({
+        relations: ['categoria'],
+      });
+    }
     return this.produtoRepo.find({
+      where: { usuarioId: usuarioLogado.id },
       relations: ['categoria'],
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string,usuarioLogado: { id: number; perfil: Perfil }) {
     return this.produtoRepo.findOneOrFail({
       where: { id },
       relations: ['categoria'],
     });
+    
+    
   }
 
-  async update(id: string, updateProdutoDto: UpdateProdutoDto) {
+  async update(id: string, updateProdutoDto: UpdateProdutoDto, user: any) {
     await this.produtoValidator.validateProduto(updateProdutoDto, id);
 
     const produto = await this.produtoRepo.findOneBy({ id });
@@ -65,14 +76,26 @@ export class ProdutoService {
     return this.produtoRepo.save(produto);
   }
 
-  async remove(id: string) {
-    return this.produtoRepo.remove({ id });
+  async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
+  const produto = await this.produtoRepo.findOneBy({ id });
+  if (!produto) throw new NotFoundException('Produto n„o encontrado');
+
+  if (usuarioLogado.perfil !== Perfil.ADMIN_MASTER && produto.usuarioId !== usuarioLogado.id) {
+    throw new NotFoundException('Produto n„o encontrado');
   }
 
-  async salvarImagem(id: string, filename: string): Promise<Produto> {
-    const produto = await this.produtoRepo.findOneBy({ id });
-    if (!produto) throw new NotFoundException('Produto n√£o encontrado');
-    produto.imagem = filename;
-    return this.produtoRepo.save(produto);
+  return this.produtoRepo.remove(produto);
+}
+
+ async salvarImagem(id: string, filename: string, usuarioLogado: { id: number; perfil: Perfil }): Promise<Produto> {
+  const produto = await this.produtoRepo.findOneBy({ id });
+  if (!produto) throw new NotFoundException('Produto n„o encontrado');
+
+  if (usuarioLogado.perfil !== Perfil.ADMIN_MASTER && produto.usuarioId !== usuarioLogado.id) {
+    throw new NotFoundException('Produto n„o encontrado');
   }
+
+  produto.imagem = filename;
+  return this.produtoRepo.save(produto);
+}
 }

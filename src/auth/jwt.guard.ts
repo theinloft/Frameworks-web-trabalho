@@ -16,7 +16,7 @@ export class JwtGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Token n√£o fornecido');
+      throw new UnauthorizedException('Token n„o fornecido');
     }
 
     const token = authHeader.split(' ')[1];
@@ -27,10 +27,10 @@ export class JwtGuard implements CanActivate {
         email: string;
         perfil: string;
       }>(token);
-      (request as unknown as Record<string, unknown>).usuario = payload;
+      (request as unknown as Record<string, unknown>).user = payload;
       return true;
     } catch {
-      throw new UnauthorizedException('Token inv√°lido ou expirado');
+      throw new UnauthorizedException('Token inv·lido ou expirado');
     }
   }
 }

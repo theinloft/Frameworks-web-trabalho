@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
@@ -19,92 +20,56 @@ export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
-  @ApiOperation({
-    summary: 'Criar cliente',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Criado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Erro de valida√ß√£o',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'N√£o autorizado',
-  })
+  @ApiOperation({ summary: 'Criar cliente' })
+  @ApiResponse({ status: 201, description: 'Criado' })
+  @ApiResponse({ status: 400, description: 'Erro de validaÁ„o' })
+  @ApiResponse({ status: 401, description: 'N„o autorizado' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  create(@Body() createClienteDto: CreateClienteDto) {
-    return this.clienteService.create(createClienteDto);
+  create(@Body() createClienteDto: CreateClienteDto, @Req() req) {
+    return this.clienteService.create(createClienteDto, req.user);
   }
 
   @Get()
-  @ApiOperation({
-    summary: 'Listar clientes',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-  })
+  @ApiOperation({ summary: 'Listar clientes' })
+  @ApiResponse({ status: 200, description: 'OK' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findAll() {
-    return this.clienteService.findAll();
+  findAll(@Req() req) {
+    return this.clienteService.findAll(req.user);
   }
 
   @Get(':id')
-  @ApiOperation({
-    summary: 'Obter cliente',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Cliente n√£o encontrado',
-  })
+  @ApiOperation({ summary: 'Obter cliente' })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 404, description: 'Cliente n„o encontrado' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findOne(@Param('id') id: string) {
-    return this.clienteService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.clienteService.findOne(id, req.user);
   }
 
   @Patch(':id')
-  @ApiOperation({
-    summary: 'Atualizar cliente',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Cliente n√£o encontrado',
-  })
+  @ApiOperation({ summary: 'Atualizar cliente' })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 404, description: 'Cliente n„o encontrado' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
-    return this.clienteService.update(id, updateClienteDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateClienteDto: UpdateClienteDto,
+    @Req() req,
+  ) {
+    return this.clienteService.update(id, updateClienteDto, req.user);
   }
 
   @Delete(':id')
-  @ApiOperation({
-    summary: 'Remover cliente',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'OK',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Cliente n√£o encontrado',
-  })
+  @ApiOperation({ summary: 'Remover cliente' })
+  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: 404, description: 'Cliente n„o encontrado' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  remove(@Param('id') id: string) {
-    return this.clienteService.remove(id);
+  remove(@Param('id') id: string, @Req() req) {
+    return this.clienteService.remove(id, req.user);
   }
 }

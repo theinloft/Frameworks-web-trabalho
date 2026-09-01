@@ -6,10 +6,11 @@ import { Produto } from './entities/produto.entity';
 import { Categoria } from 'src/categoria/entities/categoria.entity';
 import { ProdutoValidator } from './validators/produto.validator';
 import { AuthModule } from 'src/auth/auth.module';
+import { SupabaseService } from './supabase.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Produto, Categoria]), AuthModule],
-  providers: [ProdutoService, ProdutoValidator],
+  providers: [ProdutoService, ProdutoValidator,SupabaseService],
   controllers: [ProdutoController],
 })
 export class ProdutoModule {}

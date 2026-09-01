@@ -87,15 +87,11 @@ export class ProdutoService {
   return this.produtoRepo.remove(produto);
 }
 
- async salvarImagem(id: string, filename: string, usuarioLogado: { id: number; perfil: Perfil }): Promise<Produto> {
-  const produto = await this.produtoRepo.findOneBy({ id });
-  if (!produto) throw new NotFoundException('Produto não encontrado');
+ async salvarImagem(id: string, imagemUrl: string, user) {
+    const produto = await this.produtoRepo.findOneBy({ id });
+    if (!produto) throw new NotFoundException('Produto não encontrado');
 
-  if (usuarioLogado.perfil !== Perfil.ADMIN_MASTER && produto.usuarioId !== usuarioLogado.id) {
-    throw new NotFoundException('Produto não encontrado');
+    produto.imagem = imagemUrl;
+    return this.produtoRepo.save(produto);
   }
-
-  produto.imagem = filename;
-  return this.produtoRepo.save(produto);
-}
 }

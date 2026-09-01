@@ -20,9 +20,12 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { multerConfig } from './multer.config';
+import { SupabaseService } from './supabase.service';
 @Controller('produto')
 export class ProdutoController {
-  constructor(private readonly produtoService: ProdutoService) {}
+  constructor(private readonly produtoService: ProdutoService,
+        private readonly supabaseService: SupabaseService,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -116,18 +119,33 @@ export class ProdutoController {
     return this.produtoService.remove(id,req.user);
   }
 
-  @Post(':id/imagem')
-  @ApiBearerAuth()
-  @UseGuards(JwtGuard)
-  @UseInterceptors(FileInterceptor('imagem', multerConfig))
-  async uploadImagem(
-    @Param('id') id: string,
-    @UploadedFile()
-    file: { filename: string; fieldname: string; originalname: string },
-    @Req() req,
-  ) {
-    if (!file) throw new BadRequestException('Nenhum arquivo enviado');
-    return this.produtoService.salvarImagem(id, file.filename, req.user);
-  }
-}
+@Post(':id/imagem')
+@ApiBearerAuth()
+@UseGuards(JwtGuard)
+@UseInterceptors(FileInterceptor('imagem', multerConfig))
+async uploadImagem(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File,
+  @Req() req,
+) {
+  if (!file) throw new BadRequestException('Nenhum arquivo enviado');
 
+  const ext = file.originalname.split('.').pop() ?? 'jpg';
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+  const path = `${file.fieldname}-${uniqueSuffix}.${ext}`;
+
+  const bucket = process.env.SUPABASE_BUCKET_IMAGENS;
+  if (!bucket) {
+    throw new BadRequestException('Bucket de imagens não configurado');
+  }
+
+  const url = await this.supabaseService.uploadArquivo(
+    bucket,
+    path,
+    file.buffer,
+    file.mimetype,
+  );
+
+  return this.produtoService.salvarImagem(id, url, req.user);
+}
+}

@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { API_URL } from '../../config/api';
 import type { Pedido } from '../../types/pedido';
+import {getImagemUrl } from '../../utils/utils';
 
 type Props = {
   pedido: Pedido;
@@ -55,7 +56,7 @@ export default function ModalDetalhesPedido({ pedido, onFechar }: Props) {
                 {item.produto?.imagem ? (
                   <img
                     className={styles.itemImagem}
-                    src={`${API_URL}/my-uploads/${item.produto.imagem}`}
+                    src={getImagemUrl(item.produto.imagem)}
                     alt={item.produto.nome}
                   />
                 ) : (

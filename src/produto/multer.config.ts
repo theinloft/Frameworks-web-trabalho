@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 export const multerConfig: MulterOptions = {
-  storage: diskStorage({
-    destination: './my-uploads',
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const ext = file.originalname.split('.').pop() ?? 'jpg';
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
-    },
-  }),
+  storage: memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Apenas imagens são permitidas'), false);
+    }
+    cb(null, true);
+  },
 };

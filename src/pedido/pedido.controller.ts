@@ -9,6 +9,7 @@ import {
   UseGuards,
   Put,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
@@ -42,8 +43,8 @@ export class PedidoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  create(@Body() createPedidoDto: CreatePedidoDto) {
-    return this.pedidoService.create(createPedidoDto);
+  create(@Body() createPedidoDto: CreatePedidoDto,@Req() req) {
+    return this.pedidoService.create(createPedidoDto, req.user);
   }
 
   @Get()
@@ -56,27 +57,19 @@ export class PedidoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  findAll() {
-    return this.pedidoService.findAll();
+  findAll(@Req() req) {
+    return this.pedidoService.findAll(req.user);
   }
 
-  @Get(':id')
-  @ApiOperation({
-    summary: 'Obter pedido',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Pedido obtido com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido n√£o encontrado',
-  })
-  @ApiBearerAuth()
-  @UseGuards(JwtGuard)
-  findOne(@Param('id') id: string) {
-    return this.pedidoService.findOne(id);
-  }
+ @Get(':id')
+@ApiOperation({ summary: 'Obter pedido' })
+@ApiResponse({ status: 200, description: 'Pedido obtido com sucesso' })
+@ApiResponse({ status: 404, description: 'Pedido n„o encontrado' })
+@ApiBearerAuth()
+@UseGuards(JwtGuard)
+findOne(@Param('id') id: string, @Req() req) {
+  return this.pedidoService.findOne(id, req.user);
+}
 
   @Patch(':id')
   @ApiOperation({
@@ -92,12 +85,11 @@ export class PedidoController {
   })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
-    return this.pedidoService.update(id, updatePedidoDto);
+  update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto,@Req() req) {
+    return this.pedidoService.update(id, updatePedidoDto,req.user);
   }
 
-  @Delete(':id')
-  @ApiExcludeEndpoint()
+
   // @ApiOperation({
   //   summary: 'Remover pedido',
   // })
@@ -109,21 +101,24 @@ export class PedidoController {
   //   status: 404,
   //   description: 'Pedido n√£o encontrado',
   // })
-  remove(@Param('id') id: string) {
-    return this.pedidoService.remove(id);
-  }
+  @Delete(':id')
+@ApiExcludeEndpoint()
+remove(@Param('id') id: string, @Req() req) {
+  return this.pedidoService.remove(id, req.user);
+}
 
-  @Put('atualizar-status/:id')
-  @ApiOperation({ summary: 'Atualizar status do pedido' })
-  @ApiBearerAuth()
-  @UseGuards(JwtGuard)
-  atualizarStatus(
-    @Param('id') id: string,
-    @Body('status') status: StatusPedido,
-  ) {
-    if (!Object.values(StatusPedido).includes(status)) {
-      throw new BadRequestException('Status inv√°lido');
-    }
-    return this.pedidoService.atualizarStatus(id, status);
+@Put('atualizar-status/:id')
+@ApiOperation({ summary: 'Atualizar status do pedido' })
+@ApiBearerAuth()
+@UseGuards(JwtGuard)
+atualizarStatus(
+  @Param('id') id: string,
+  @Body('status') status: StatusPedido,
+  @Req() req,
+) {
+  if (!Object.values(StatusPedido).includes(status)) {
+    throw new BadRequestException('Status inv·lido');
   }
+  return this.pedidoService.atualizarStatus(id, status, req.user);
+}
 }

@@ -9,6 +9,8 @@ import { PedidoItem } from './entities/pedidoItem.entity';
 import { PedidoValidator } from './validators/pedido.validator';
 import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { PedidoResponseDto } from './dto/pedido-response.dto';
+import { Perfil } from 'src/usuario/enums/perfil.enum';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 
 @Injectable()
 export class PedidoService {
@@ -22,7 +24,8 @@ export class PedidoService {
     private readonly pedidoValidator: PedidoValidator,
   ) {}
 
-  async create(_createPedidoDto: CreatePedidoDto) {
+  async create(_createPedidoDto: CreatePedidoDto,usuarioLogado: { id: number }) {
+    
     await this.pedidoValidator.validatePedido(_createPedidoDto);
     const itensPedido: PedidoItem[] = [];
 
@@ -58,25 +61,47 @@ export class PedidoService {
       valorTotal,
 
       itens: itensPedido,
+       usuario: { id: usuarioLogado.id } as Usuario,
     });
 
     return this.pedidoRepo.save(pedido);
   }
 
-  findAll() {
+  findAll(usuarioLogado: { id: number; perfil: Perfil }) {
+    if (usuarioLogado.perfil === Perfil.ADMIN_MASTER) {
+      return this.pedidoRepo.find({
+        relations: ['cliente', 'itens', 'itens.produto'],
+      });
+    }
     return this.pedidoRepo.find({
+      where: { usuarioId: usuarioLogado.id },
       relations: ['cliente', 'itens', 'itens.produto'],
     });
   }
 
-  async findOne(id: string) {
-    return this.pedidoRepo.findOne({
+ async findOne(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
+    const pedido = await this.pedidoRepo.findOne({
       where: { id },
       relations: ['cliente', 'itens', 'itens.produto'],
     });
+
+    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      pedido.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Pedido n„o encontrado');
+    }
+
+    return pedido;
   }
 
-  async update(id: string, dto: UpdatePedidoDto): Promise<PedidoResponseDto> {
+  async update(
+    id: string,
+    dto: UpdatePedidoDto,
+    usuarioLogado: { id: number; perfil: Perfil },
+  ): Promise<PedidoResponseDto> {
     await this.pedidoValidator.validatePedido(dto);
 
     const pedido = await this.pedidoRepo.findOne({
@@ -85,7 +110,14 @@ export class PedidoService {
     });
 
     if (!pedido) {
-      throw new NotFoundException('Pedido n√£o encontrado');
+      throw new NotFoundException('Pedido n„o encontrado');
+    }
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      pedido.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Pedido n„o encontrado');
     }
 
     if (dto.clienteId) {
@@ -94,7 +126,7 @@ export class PedidoService {
       });
 
       if (!cliente) {
-        throw new NotFoundException('Cliente n√£o encontrado');
+        throw new NotFoundException('Cliente n„o encontrado');
       }
 
       pedido.cliente = cliente;
@@ -110,7 +142,7 @@ export class PedidoService {
 
         if (!produto) {
           throw new NotFoundException(
-            `Produto ${itemDto.produtoId} n√£o encontrado`,
+            `Produto ${itemDto.produtoId} n„o encontrado`,
           );
         }
 
@@ -152,13 +184,29 @@ export class PedidoService {
     return this.toResponse(pedidoSalvo);
   }
 
-  remove(id: string) {
+
+  async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
+    const pedido = await this.pedidoRepo.findOneBy({ id });
+
+    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      pedido.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Pedido n„o encontrado');
+    }
+
     return this.pedidoRepo.delete(id);
   }
 
-  async atualizarStatus(id: string, status: StatusPedido): Promise<Pedido> {
-    const pedido = await this.findOne(id);
-    if (!pedido) throw new NotFoundException('Pedido n√£o encontrado');
+  async atualizarStatus(
+    id: string,
+    status: StatusPedido,
+    usuarioLogado: { id: number; perfil: Perfil },
+  ): Promise<Pedido> {
+    const pedido = await this.findOne(id, usuarioLogado);
+    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
     pedido.status = status;
     return this.pedidoRepo.save(pedido);
   }

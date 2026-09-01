@@ -1,6 +1,6 @@
 import styles from './Produtos.module.css';
 import Paginacao from '../../components/Paginacao/Paginacao';
-import { paginar } from '../../utils/utils';
+import { paginar,getImagemUrl  } from '../../utils/utils';
 import { useApi } from '../../hooks/useApi';
 import Modal from '../../components/Modal/Modal';
 import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
@@ -97,7 +97,7 @@ export default function Produtos() {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `${API_URL}/api/produto/${editando.id}/imagem`, // URL corrigida
+        `${API_URL}/api/produto/${editando.id}/imagem`,
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -159,7 +159,7 @@ export default function Produtos() {
       const formData = new FormData();
       formData.append('imagem', imagem);
       await fetch(
-        `${API_URL}/api/produto/${novo.id}/imagem`, // URL corrigida
+        `${API_URL}/api/produto/${novo.id}/imagem`,
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -283,7 +283,7 @@ export default function Produtos() {
             {visualizando.imagem ? (
               <img
                 className={styles.lightboxImagem}
-                src={`${API_URL}/my-uploads/${visualizando.imagem}`}
+                src={getImagemUrl(visualizando.imagem)}
                 alt={visualizando.nome}
               />
             ) : (

@@ -1,9 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Perfil } from '../usuario/enums/perfil.enum';
 
 @Injectable()
 export class ClienteService {
@@ -12,29 +17,53 @@ export class ClienteService {
     private readonly clienteRepo: Repository<Cliente>,
   ) {}
 
-  create(_createClienteDto: CreateClienteDto) {
+  create(dto: CreateClienteDto, usuarioLogado: { id: number }) {
     const cliente = this.clienteRepo.create({
-      nome: _createClienteDto.nome,
-      email: _createClienteDto.email,
+      nome: dto.nome,
+      email: dto.email,
+      usuarioId: usuarioLogado.id,
     });
     return this.clienteRepo.save(cliente);
   }
 
-  findAll() {
-    return this.clienteRepo.find();
-  }
-
-  findOne(id: string) {
-    return this.clienteRepo.findOneByOrFail({ id });
-  }
-
-  async update(id: string, dto: UpdateClienteDto) {
-    const cliente = await this.clienteRepo.findOne({
-      where: { id },
+  findAll(usuarioLogado: { id: number; perfil: Perfil }) {
+    if (usuarioLogado.perfil === Perfil.ADMIN_MASTER) {
+      return this.clienteRepo.find();
+    }
+    return this.clienteRepo.find({
+      where: { usuarioId: usuarioLogado.id },
     });
+  }
+
+  async findOne(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
+    const cliente = await this.clienteRepo.findOneByOrFail({ id });
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      cliente.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Cliente n„o encontrado');
+    }
+
+    return cliente;
+  }
+
+  async update(
+    id: string,
+    dto: UpdateClienteDto,
+    usuarioLogado: { id: number; perfil: Perfil },
+  ) {
+    const cliente = await this.clienteRepo.findOne({ where: { id } });
 
     if (!cliente) {
-      throw new NotFoundException('Cliente n√£o encontrado');
+      throw new NotFoundException('Cliente n„o encontrado');
+    }
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      cliente.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Cliente n„o encontrado');
     }
 
     cliente.nome = dto.nome ?? cliente.nome;
@@ -43,24 +72,26 @@ export class ClienteService {
     return this.clienteRepo.save(cliente);
   }
 
-  async remove(id: string) {
-    const cliente = await this.clienteRepo.findOne({
-      where: { id },
-    });
+  async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
+    const cliente = await this.clienteRepo.findOne({ where: { id } });
 
     if (!cliente) {
-      throw new NotFoundException('Cliente n√£o encontrado');
+      throw new NotFoundException('Cliente n„o encontrado');
+    }
+
+    if (
+      usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
+      cliente.usuarioId !== usuarioLogado.id
+    ) {
+      throw new NotFoundException('Cliente n„o encontrado');
     }
 
     try {
       await this.clienteRepo.remove(cliente);
-
-      return {
-        mensagem: 'Cliente removido com sucesso',
-      };
+      return { mensagem: 'Cliente removido com sucesso' };
     } catch {
       throw new BadRequestException(
-        'N√£o √© poss√≠vel remover cliente com pedidos vinculados',
+        'N„o È possÌvel remover cliente com pedidos vinculados',
       );
     }
   }

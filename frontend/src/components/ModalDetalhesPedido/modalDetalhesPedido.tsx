@@ -1,7 +1,6 @@
 import styles from './modalDetalhesPedido.module.css';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { API_URL } from '../../config/api';
 import type { Pedido } from '../../types/pedido';
 import {getImagemUrl } from '../../utils/utils';
 

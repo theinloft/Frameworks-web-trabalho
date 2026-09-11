@@ -16,6 +16,11 @@ export enum StatusPedido {
   CONCLUIDO = 'concluido',
   CANCELADO = 'cancelado',
 }
+export enum FormaPagamento {
+  DINHEIRO = 'dinheiro',
+  CARTAO = 'cartao',
+  PIX = 'pix',
+}
 @Entity('pedidos')
 export class Pedido {
   @PrimaryGeneratedColumn('uuid')
@@ -33,6 +38,9 @@ export class Pedido {
 
   @Column({ type: 'enum', enum: StatusPedido, default: StatusPedido.ANDAMENTO })
   status!: StatusPedido;
+
+  @Column({ type: 'enum', enum: FormaPagamento, nullable: true })
+  formaPagamento?: FormaPagamento;
 
   @ManyToOne(() => Cliente)
   cliente!: Cliente;

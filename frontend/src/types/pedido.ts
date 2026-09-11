@@ -18,6 +18,20 @@ export type Cliente = {
   email: string;
 };
 
+export const FormaPagamento = {
+  DINHEIRO: 'dinheiro',
+  CARTAO: 'cartao',
+  PIX: 'pix',
+} as const;
+
+export type FormaPagamento = (typeof FormaPagamento)[keyof typeof FormaPagamento];
+
+export const FORMA_PAGAMENTO_LABELS: Record<FormaPagamento, string> = {
+  [FormaPagamento.DINHEIRO]: 'Dinheiro',
+  [FormaPagamento.CARTAO]: 'Cartão',
+  [FormaPagamento.PIX]: 'Pix',
+};
+
 export type Pedido = {
   id: string;
   horarioPedido: string;
@@ -25,3 +39,4 @@ export type Pedido = {
   cliente?: Cliente;
   itens: Item[];
 };
+

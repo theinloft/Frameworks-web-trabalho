@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import Paginacao from '../../components/Paginacao/Paginacao';
 import { paginar } from '../../utils/utils';
 import ModalConfirmar from '../../components/ModalConfirmar/ModalConfirmar';
+import ModalConcluirPedido from '../../components/ModalConcluirPedido/ModalConcluirPedido';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import ModalDetalhesPedido from '../../components/ModalDetalhesPedido/modalDetalhesPedido';
 import { API_URL } from '../../config/api';
 import type { Pedido } from '../../types/pedido';
+import { FormaPagamento } from '../../types/pedido';
 
 const POR_PAGINA = 5;
 
@@ -36,8 +38,16 @@ export default function Pedido() {
 
   const [confirmarCancelarPedido, setConfirmarCancelarPedido] = useState<{
     id: string;
-    status: 'andamento' | 'concluido' | 'cancelado';
   } | null>(null);
+
+  const [pedidoParaConcluir, setPedidoParaConcluir] = useState<string | null>(
+    null,
+  );
+
+  const [erroConcluir, setErroConcluir] = useState<string | null>(null);
+
+
+  const token = localStorage.getItem('token');
 
   async function atualizarStatus(
     id: string,
@@ -57,7 +67,34 @@ export default function Pedido() {
     setConfirmarCancelarPedido(null);
   }
 
-  const token = localStorage.getItem('token');
+  async function concluirPedido(id: string, formaPagamento: FormaPagamento) {
+    const response = await fetch(`${API_URL}/api/pedido/${id}/concluir`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ formaPagamento }),
+    });
+
+    if (!response.ok) {
+      const erro = await response.json().catch(() => null);
+      setErroConcluir(
+        erro?.message ??
+        'Não foi possível concluir o pedido. Tente novamente.',
+      );
+      return;
+    }
+
+    setPedidos((prev) =>
+      prev
+        ? prev.map((p) =>
+          p.id === id ? { ...p, status: 'concluido', formaPagamento } : p,
+        )
+        : prev,
+    );
+    setPedidoParaConcluir(null);
+  }
 
   return (
     <div className={styles.page}>
@@ -80,7 +117,7 @@ export default function Pedido() {
               <span>DATA/HORA</span>
               <span>NUMERO DO PEDIDO</span>
               <span>STATUS PEDIDO</span>
-              <span>AÃ‡Ã•ES</span>
+              <span>AÇÕES</span>
             </div>
             {paginar(pedidos ?? [], pagPedidos, POR_PAGINA).map((p) => (
               <div key={p.id} className={styles.row}>
@@ -88,7 +125,7 @@ export default function Pedido() {
                   className={styles.celula}
                   onClick={() => setVisualizando(p)}
                 >
-                  {p.cliente?.nome ?? 'â€”'}
+                  {p.cliente?.nome ?? '—'}
                 </span>
                 <span className={styles.celulaSecundaria}>
                   {format(new Date(p.horarioPedido), 'dd/MM/yyyy HH:mm', {
@@ -112,22 +149,14 @@ export default function Pedido() {
                   <button
                     className={styles.btnCancelar}
                     onClick={() =>
-                      setConfirmarCancelarPedido({
-                        id: p.id!,
-                        status: 'cancelado',
-                      })
+                      setConfirmarCancelarPedido({ id: p.id! })
                     }
                   >
                     CANCELAR PEDIDO
                   </button>
                   <button
                     className={styles.btnConcluir}
-                    onClick={() =>
-                      setConfirmarCancelarPedido({
-                        id: p.id!,
-                        status: 'concluido',
-                      })
-                    }
+                    onClick={() => setPedidoParaConcluir(p.id!)}
                   >
                     CONCLUIR PEDIDO
                   </button>
@@ -143,16 +172,27 @@ export default function Pedido() {
 
             {confirmarCancelarPedido && (
               <ModalConfirmar
-                mensagem={`Deseja ${confirmarCancelarPedido.status === 'cancelado' ? 'cancelar' : 'concluir'} este pedido?`}
+                mensagem="Deseja cancelar este pedido?"
                 onConfirmar={() =>
-                  atualizarStatus(
-                    confirmarCancelarPedido.id,
-                    confirmarCancelarPedido.status,
-                  )
+                  atualizarStatus(confirmarCancelarPedido.id, 'cancelado')
                 }
                 onCancelar={() => setConfirmarCancelarPedido(null)}
               />
             )}
+
+            {pedidoParaConcluir && (
+              <ModalConcluirPedido
+                erro={erroConcluir}
+                onConfirmar={(formaPagamento) =>
+                  concluirPedido(pedidoParaConcluir, formaPagamento)
+                }
+                onCancelar={() => {
+                  setPedidoParaConcluir(null);
+                  setErroConcluir(null);
+                }}
+              />
+            )}
+
             {visualizando && (
               <ModalDetalhesPedido
                 pedido={visualizando}

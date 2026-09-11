@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { StatusPedido } from './entities/pedido.entity';
+import { ConcluirPedidoDto } from './dto/concluir-pedido.dto';
 
 @ApiTags('Pedido')
 @Controller('pedido')
@@ -64,7 +65,7 @@ export class PedidoController {
  @Get(':id')
 @ApiOperation({ summary: 'Obter pedido' })
 @ApiResponse({ status: 200, description: 'Pedido obtido com sucesso' })
-@ApiResponse({ status: 404, description: 'Pedido n„o encontrado' })
+@ApiResponse({ status: 404, description: 'Pedido n√£o encontrado' })
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 findOne(@Param('id') id: string, @Req() req) {
@@ -107,6 +108,17 @@ remove(@Param('id') id: string, @Req() req) {
   return this.pedidoService.remove(id, req.user);
 }
 
+@Patch(':id/concluir')
+@ApiBearerAuth()
+@UseGuards(JwtGuard)
+concluirPedido(
+  @Param('id') id: string,
+  @Body() dto: ConcluirPedidoDto,
+  @Req() req,
+) {
+  return this.pedidoService.concluirPedido(id, dto, req.user);
+}
+
 @Put('atualizar-status/:id')
 @ApiOperation({ summary: 'Atualizar status do pedido' })
 @ApiBearerAuth()
@@ -117,8 +129,10 @@ atualizarStatus(
   @Req() req,
 ) {
   if (!Object.values(StatusPedido).includes(status)) {
-    throw new BadRequestException('Status inv·lido');
+    throw new BadRequestException('Status inv√°lido');
   }
   return this.pedidoService.atualizarStatus(id, status, req.user);
 }
+
+
 }

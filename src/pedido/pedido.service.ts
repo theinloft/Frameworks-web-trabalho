@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { Cliente } from 'src/cliente/entities/cliente.entity';
 import { PedidoResponseDto } from './dto/pedido-response.dto';
 import { Perfil } from 'src/usuario/enums/perfil.enum';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { ConcluirPedidoDto } from './dto/concluir-pedido.dto';
 
 @Injectable()
 export class PedidoService {
@@ -85,13 +86,13 @@ export class PedidoService {
       relations: ['cliente', 'itens', 'itens.produto'],
     });
 
-    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
+    if (!pedido) throw new NotFoundException('Pedido n√£o encontrado');
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       pedido.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Pedido n„o encontrado');
+      throw new NotFoundException('Pedido n√£o encontrado');
     }
 
     return pedido;
@@ -110,14 +111,14 @@ export class PedidoService {
     });
 
     if (!pedido) {
-      throw new NotFoundException('Pedido n„o encontrado');
+      throw new NotFoundException('Pedido n√£o encontrado');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       pedido.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Pedido n„o encontrado');
+      throw new NotFoundException('Pedido n√£o encontrado');
     }
 
     if (dto.clienteId) {
@@ -126,7 +127,7 @@ export class PedidoService {
       });
 
       if (!cliente) {
-        throw new NotFoundException('Cliente n„o encontrado');
+        throw new NotFoundException('Pedido n√£o encontrado');
       }
 
       pedido.cliente = cliente;
@@ -142,7 +143,7 @@ export class PedidoService {
 
         if (!produto) {
           throw new NotFoundException(
-            `Produto ${itemDto.produtoId} n„o encontrado`,
+            `Produto ${itemDto.produtoId} n√£o encontrado`,
           );
         }
 
@@ -188,13 +189,13 @@ export class PedidoService {
   async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
     const pedido = await this.pedidoRepo.findOneBy({ id });
 
-    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
+    if (!pedido) throw new NotFoundException('Pedido n√£o encontrado');
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       pedido.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Pedido n„o encontrado');
+      throw new NotFoundException('Pedido n√£o encontrado');
     }
 
     return this.pedidoRepo.delete(id);
@@ -206,10 +207,31 @@ export class PedidoService {
     usuarioLogado: { id: number; perfil: Perfil },
   ): Promise<Pedido> {
     const pedido = await this.findOne(id, usuarioLogado);
-    if (!pedido) throw new NotFoundException('Pedido n„o encontrado');
+    if (!pedido) throw new NotFoundException('Pedido n√£o encontrado');
     pedido.status = status;
     return this.pedidoRepo.save(pedido);
   }
+
+  async concluirPedido(
+  id: string,
+  dto: ConcluirPedidoDto,
+  usuarioLogado: { id: number; perfil: Perfil },
+): Promise<Pedido> {
+  const pedido = await this.findOne(id, usuarioLogado);
+
+  if (pedido.status === StatusPedido.CONCLUIDO) {
+    throw new BadRequestException('Pedido j√° est√° conclu√≠do');
+  }
+
+  if (pedido.status === StatusPedido.CANCELADO) {
+    throw new BadRequestException('Pedido cancelado n√£o pode ser conclu√≠do');
+  }
+
+  pedido.formaPagamento = dto.formaPagamento;
+  pedido.status = StatusPedido.CONCLUIDO;
+
+  return this.pedidoRepo.save(pedido);
+}
 
   private toResponse(pedido: Pedido): PedidoResponseDto {
     return {
@@ -226,3 +248,4 @@ export class PedidoService {
     };
   }
 }
+

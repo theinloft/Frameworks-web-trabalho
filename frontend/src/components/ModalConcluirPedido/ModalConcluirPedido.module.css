@@ -1,0 +1,83 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1e1e1e;
+  padding: 24px;
+  border-radius: 8px;
+  width: 320px;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  margin: 12px 0;
+  border-radius: 4px;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.mensagem {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "Arial Black", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 0;
+}
+
+.btnConfirmar {
+  background: #f5c800;
+  color: #111;
+  border: none;
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnConfirmar:hover {
+  background: #fff;
+}
+
+.btnCancelar {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: inherit;
+  flex: 1;
+}
+
+.btnCancelar:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.erro {
+  color: #ff5050;
+  font-size: 0.9rem;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}

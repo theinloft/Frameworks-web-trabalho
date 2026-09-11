@@ -1,7 +1,8 @@
-import { IsArray, IsUUID, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { CreatePedidoItemDto } from './create-pedido-item.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { FormaPagamento } from '../entities/pedido.entity';
 
 export class CreatePedidoDto {
   @ApiProperty({
@@ -22,4 +23,5 @@ export class CreatePedidoDto {
   })
   @Type(() => CreatePedidoItemDto)
   itens!: CreatePedidoItemDto[];
+
 }

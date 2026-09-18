@@ -10,24 +10,23 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase project
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Ping Supabase database
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_TABLE: ${{ secrets.SUPABASE_TABLE }}
+          PGHOST: ${{ secrets.DATABASE_HOST }}
+          PGPORT: ${{ secrets.DATABASE_PORT }}
+          PGUSER: ${{ secrets.DATABASE_USER }}
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}  
         run: |
-          echo "Pingando o projeto Supabase..."
-          response=$(curl -s -o response.txt -w "%{http_code}" \
-            "$SUPABASE_URL/rest/v1/$SUPABASE_TABLE?select=id&limit=1" \
-            -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "Pingando o banco Supabase em $PGHOST:$PGPORT..."
+          psql -c "SELECT 1;" -v ON_ERROR_STOP=1
 
-          echo "Status HTTP: $response"
-          cat response.txt
-
-          if [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; then
+          if [ $? -eq 0 ]; then
             echo " Ping bem-sucedido, projeto está ativo."
           else
-            echo "Ping falhou (status $response). Verifique as credenciais/URL."
+            echo " Ping falhou. Verifique host/porta/usuário/senha."
             exit 1
           fi

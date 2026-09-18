@@ -1,0 +1,32 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Roda a cada 3 dias
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: {}  # permite rodar manualmente pela aba "Actions" no GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Ping Supabase database
+        env:
+          PGHOST: ${{ secrets.DATABASE_HOST }}
+          PGPORT: ${{ secrets.DATABASE_PORT }}
+          PGUSER: ${{ secrets.DATABASE_USER }}
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}  
+        run: |
+          echo "Pingando o banco Supabase em $PGHOST:$PGPORT..."
+          psql -c "SELECT 1;" -v ON_ERROR_STOP=1
+
+          if [ $? -eq 0 ]; then
+            echo " Ping bem-sucedido, projeto está ativo."
+          else
+            echo " Ping falhou. Verifique host/porta/usuário/senha."
+            exit 1
+          fi

@@ -15,12 +15,13 @@ export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private readonly clienteRepo: Repository<Cliente>,
-  ) {}
+  ) { }
 
   create(dto: CreateClienteDto, usuarioLogado: { id: number }) {
     const cliente = this.clienteRepo.create({
       nome: dto.nome,
       email: dto.email,
+      telefone: dto.telefone?.replace(/\D/g, ''),
       usuarioId: usuarioLogado.id,
     });
     return this.clienteRepo.save(cliente);
@@ -68,6 +69,9 @@ export class ClienteService {
 
     cliente.nome = dto.nome ?? cliente.nome;
     cliente.email = dto.email ?? cliente.email;
+    cliente.telefone = dto.telefone
+      ? dto.telefone.replace(/\D/g, '')
+      : cliente.telefone;
 
     return this.clienteRepo.save(cliente);
   }

@@ -13,6 +13,7 @@ type Cliente = {
   id: string;
   nome: string;
   email: string;
+  telefone: string;
 };
 
 export default function Clientes() {
@@ -24,7 +25,7 @@ export default function Clientes() {
 
   const token = localStorage.getItem('token');
 
-  const [form, setForm] = useState({ nome: '', email: '' });
+  const [form, setForm] = useState({ nome: '', email: '' , telefone:''});
 
   const { data: clientes, setData: setClientes } = useApi<Cliente[]>(
     `${API_URL}/api/cliente`,
@@ -33,11 +34,12 @@ export default function Clientes() {
   const camposClientes = [
     { label: 'NOME', chave: 'nome' },
     { label: 'EMAIL', chave: 'email', tipo: 'email' },
+    { label: 'TELEFONE', chave: 'telefone', tipo: 'telefone' },
   ];
 
   function abrirEdicao(c: Cliente) {
     setEditando(c);
-    setForm({ nome: c.nome, email: c.email });
+    setForm({ nome: c.nome, email: c.email, telefone: c.telefone });
   }
 
   async function salvarEdicao() {
@@ -89,7 +91,7 @@ export default function Clientes() {
     const novo = await res.json();
     setClientes((prev) => (prev ? [...prev, novo] : [novo]));
     setCriando(false);
-    setForm({ nome: '', email: '' });
+    setForm({ nome: '', email: '', telefone: '' });
   }
 
   return (
@@ -101,7 +103,7 @@ export default function Clientes() {
           onClick={() => {
             setCriando(true);
             setErro('');
-            setForm({ nome: '', email: '' });
+            setForm({ nome: '', email: '', telefone:'' });
           }}
         >
           + NOVO CLIENTE
@@ -112,12 +114,14 @@ export default function Clientes() {
         <div className={styles.tableHead}>
           <span>NOME</span>
           <span>EMAIL</span>
+          <span>TELEFONE</span>
           <span>AÇÕES</span>
         </div>
         {paginar(clientes ?? [], pagClientes, POR_PAGINA).map((c) => (
           <div key={c.id} className={styles.row}>
             <span className={styles.celula}>{c.nome}</span>
             <span className={styles.celulaSecundaria}>{c.email}</span>
+            <span className={styles.celulaSecundaria}>{c.telefone}</span>
             <span className={styles.celulaAcoes}>
               <button
                 className={styles.btnEditar}

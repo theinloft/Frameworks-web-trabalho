@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MinLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateClienteDto {
@@ -17,4 +17,11 @@ export class CreateClienteDto {
   })
   @IsEmail()
   email?: string;
+
+@IsOptional()
+  @IsString()
+  @Matches(/^\d{10,11}$/, {
+    message: 'Telefone deve conter 10 ou 11 dígitos (com DDD)',
+  })
+  telefone?: string;
 }

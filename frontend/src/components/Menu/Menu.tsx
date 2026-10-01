@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Menu.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,24 @@ function Menu() {
   const menuRef = useRef<HTMLDivElement>(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+
+  function irParaTutoriais(e: React.MouseEvent) {
+    e.preventDefault();
+    setMenuAberto(false);
+
+    if (location.pathname === "/") {
+      document
+        .getElementById("tutoriais")
+        ?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate("/", { state: { scrollTo: "tutoriais" } });
+    }
+  }
+
+
 
   useEffect(() => {
     function handleStorage() {
@@ -61,7 +79,11 @@ function Menu() {
 
         <div className="lista">
           <ul className="nav-links">
-            <li>TUTORIAIS</li>
+            <li>
+              <a href="#tutoriais" onClick={irParaTutoriais}>
+                TUTORIAIS
+              </a>
+            </li>
             <li>
               <Link to={'/cases-clientes'}>CASE DE CLIENTES</Link>{' '}
             </li>
@@ -116,7 +138,11 @@ function Menu() {
       {menuAberto && (
         <div className="menu-mobile">
           <ul>
-            <li>TUTORIAIS</li>
+            <li>
+              <a href="#tutoriais" onClick={irParaTutoriais}>
+                TUTORIAIS
+              </a>
+            </li>
             <li>
               <Link to={'/cases-clientes'}>CASE DE CLIENTES</Link>{' '}
             </li>

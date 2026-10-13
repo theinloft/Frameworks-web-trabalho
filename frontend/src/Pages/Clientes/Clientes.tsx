@@ -14,6 +14,7 @@ type Cliente = {
   nome: string;
   email: string;
   telefone: string;
+  documento: string;
 };
 
 export default function Clientes() {
@@ -25,7 +26,7 @@ export default function Clientes() {
 
   const token = localStorage.getItem('token');
 
-  const [form, setForm] = useState({ nome: '', email: '' , telefone:''});
+  const [form, setForm] = useState({ nome: '', email: '', telefone: '', documento: '' });
 
   const { data: clientes, setData: setClientes } = useApi<Cliente[]>(
     `${API_URL}/api/cliente`,
@@ -35,11 +36,12 @@ export default function Clientes() {
     { label: 'NOME', chave: 'nome' },
     { label: 'EMAIL', chave: 'email', tipo: 'email' },
     { label: 'TELEFONE', chave: 'telefone', tipo: 'telefone' },
+    { label: 'CPF/CNPJ', chave: 'documento', tipo: 'documento' },
   ];
 
   function abrirEdicao(c: Cliente) {
     setEditando(c);
-    setForm({ nome: c.nome, email: c.email, telefone: c.telefone });
+    setForm({ nome: c.nome, email: c.email, telefone: c.telefone, documento: c.documento });
   }
 
   async function salvarEdicao() {
@@ -49,18 +51,34 @@ export default function Clientes() {
       return;
     }
     setErro('');
-    await fetch(`${API_URL}/api/cliente/${editando.id}`, {
+
+    const payload = {
+      ...form,
+      telefone: form.telefone.replace(/\D/g, ''),
+      documento: form.documento.replace(/\D/g, ''),
+    };
+
+    const res = await fetch(`${API_URL}/api/cliente/${editando.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
+
+    if (!res.ok) {
+      const erroResposta = await res.json();
+      const mensagem = Array.isArray(erroResposta.message)
+        ? erroResposta.message[0]
+        : erroResposta.message;
+      setErro(mensagem || 'Erro ao salvar cliente.');
+      return;
+    }
+
+    const atualizado = await res.json();
     setClientes((prev) =>
-      prev
-        ? prev.map((c) => (c.id === editando.id ? { ...c, ...form } : c))
-        : prev,
+      prev ? prev.map((c) => (c.id === editando.id ? atualizado : c)) : prev,
     );
     setEditando(null);
   }
@@ -80,18 +98,36 @@ export default function Clientes() {
       return;
     }
     setErro('');
+
+    const payload = {
+      ...form,
+      telefone: form.telefone.replace(/\D/g, ''),
+      documento: form.documento.replace(/\D/g, ''),
+    };
+
     const res = await fetch(`${API_URL}/api/cliente`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
+
+    if (!res.ok) {
+      const erroResposta = await res.json();
+      const mensagem = Array.isArray(erroResposta.message)
+        ? erroResposta.message[0]
+        : erroResposta.message;
+      setErro(mensagem || 'Erro ao salvar cliente.');
+      return;
+    }
+
+
     const novo = await res.json();
     setClientes((prev) => (prev ? [...prev, novo] : [novo]));
     setCriando(false);
-    setForm({ nome: '', email: '', telefone: '' });
+    setForm({ nome: '', email: '', telefone: '', documento: '' });
   }
 
   return (
@@ -103,7 +139,7 @@ export default function Clientes() {
           onClick={() => {
             setCriando(true);
             setErro('');
-            setForm({ nome: '', email: '', telefone:'' });
+            setForm({ nome: '', email: '', telefone: '', documento: '' });
           }}
         >
           + NOVO CLIENTE
@@ -114,14 +150,16 @@ export default function Clientes() {
         <div className={styles.tableHead}>
           <span>NOME</span>
           <span>EMAIL</span>
-          <span>TELEFONE</span>
+          <span className={styles.celulaTelefone}>TELEFONE</span>
+          <span className={styles.celulaDocumento}>CPF/CNPJ</span>
           <span>AÇÕES</span>
         </div>
         {paginar(clientes ?? [], pagClientes, POR_PAGINA).map((c) => (
           <div key={c.id} className={styles.row}>
             <span className={styles.celula}>{c.nome}</span>
             <span className={styles.celulaSecundaria}>{c.email}</span>
-            <span className={styles.celulaSecundaria}>{c.telefone}</span>
+            <span className={`${styles.celulaSecundaria} ${styles.celulaTelefone}`}>{c.telefone}</span>
+            <span className={`${styles.celulaSecundaria} ${styles.celulaDocumento}`}>{c.documento}</span>
             <span className={styles.celulaAcoes}>
               <button
                 className={styles.btnEditar}

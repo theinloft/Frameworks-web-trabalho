@@ -22,6 +22,7 @@ export class ClienteService {
       nome: dto.nome,
       email: dto.email,
       telefone: dto.telefone?.replace(/\D/g, ''),
+      documento: dto.documento?.replace(/\D/g, ''),
       usuarioId: usuarioLogado.id,
     });
     return this.clienteRepo.save(cliente);
@@ -43,7 +44,7 @@ export class ClienteService {
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       cliente.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Cliente n„o encontrado');
+      throw new NotFoundException('Cliente n√£o encontrado');
     }
 
     return cliente;
@@ -57,14 +58,14 @@ export class ClienteService {
     const cliente = await this.clienteRepo.findOne({ where: { id } });
 
     if (!cliente) {
-      throw new NotFoundException('Cliente n„o encontrado');
+      throw new NotFoundException('Cliente n√£o encontrado');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       cliente.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Cliente n„o encontrado');
+      throw new NotFoundException('Cliente n√£o encontrado');
     }
 
     cliente.nome = dto.nome ?? cliente.nome;
@@ -72,6 +73,9 @@ export class ClienteService {
     cliente.telefone = dto.telefone
       ? dto.telefone.replace(/\D/g, '')
       : cliente.telefone;
+    cliente.documento = dto.documento
+      ? dto.documento.replace(/\D/g, '')
+      : cliente.documento;
 
     return this.clienteRepo.save(cliente);
   }
@@ -80,14 +84,14 @@ export class ClienteService {
     const cliente = await this.clienteRepo.findOne({ where: { id } });
 
     if (!cliente) {
-      throw new NotFoundException('Cliente n„o encontrado');
+      throw new NotFoundException('Cliente n√£o encontrado');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       cliente.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Cliente n„o encontrado');
+      throw new NotFoundException('Cliente n√£o encontrado');
     }
 
     try {
@@ -95,7 +99,7 @@ export class ClienteService {
       return { mensagem: 'Cliente removido com sucesso' };
     } catch {
       throw new BadRequestException(
-        'N„o È possÌvel remover cliente com pedidos vinculados',
+        'N√£o foi poss√≠vel remover cliente com pedidos vinculados',
       );
     }
   }

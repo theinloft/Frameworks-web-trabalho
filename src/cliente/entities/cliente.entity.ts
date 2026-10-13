@@ -22,4 +22,7 @@ export class Cliente {
 
   @Column()
   usuarioId!: number;
+
+  @Column({ nullable: true, unique: true })
+  documento?: string;
 }

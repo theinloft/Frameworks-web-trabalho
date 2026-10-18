@@ -1,24 +1,27 @@
 .foot {
 	width: 100%;
-	height: 160px;
+	height: 200px;
 	background-color: #f5c800;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
 }
 
 .foot address .titulo {
 	padding-top: 10px;
 	color: #000;
 	display: block;
-    margin-block-start: 1.33em;
-    margin-block-end: 1.33em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    font-weight: bold;
-    margin-top: 0;
-    margin-bottom: .5rem;
-    font-family: "Arial", sans-serif;
-    font-weight: bolder;
-    line-height: 1.2;
-    font-size: 1.5rem;
+	margin-block-start: 1.33em;
+	margin-block-end: 1.33em;
+	margin-inline-start: 0px;
+	margin-inline-end: 0px;
+	font-weight: bold;
+	margin-top: 0;
+	margin-bottom: .5rem;
+	font-family: "Arial", sans-serif;
+	font-weight: bolder;
+	line-height: 1.2;
+	font-size: 1.5rem;
 	font-style: normal;
 	letter-spacing: 1px;
 }
@@ -32,27 +35,44 @@
 	font-family: "Arial", sans-serif;
 }
 
-.area-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    width: 80%;
-    margin: 0 auto;
-} 
 
-/* .foot address{
-	float: left;
+.foot ul a {
+	text-decoration: none;
+	font-family: "Arial", sans-serif;
+	padding-bottom: 20px;
+	color: #000;
 }
 
-.foot nav{
-	float: right;
-} */
+.foot ul {
+	list-style: none;
+
+}
+
+.lista-footer {
+	padding-left: 25px;
+}
+
+.footer-links li {
+	width: 150px;
+	margin: 15px 0;
+
+
+}
+
+.area-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	width: 80%;
+	margin: 0 auto;
+}
+
 
 .social-nav li {
 	list-style-type: none;
 	display: inline-block;
-	padding-top: 10px; 
+	padding-top: 10px;
 	width: 70px;
 }
 
@@ -67,30 +87,56 @@
 .facebook,
 .pinterest,
 .instagram,
-.google{
+.google {
 	transition: color 0.2s, transform 0.3s;
 
 }
 
-.facebook:hover{
+.facebook:hover {
 	color: #3B5998;
 	transform: translateY(-10px);
 
 }
 
-.pinterest:hover{
+.pinterest:hover {
 	color: red;
 	transform: translateY(-10px);
 
 }
 
-.instagram:hover{
+.instagram:hover {
 	color: #517FA4;
 	transform: translateY(-10px);
 
 }
 
-.google:hover{
+.google:hover {
 	color: #DD4B39;
 	transform: translateY(-10px);
+}
+
+@media (max-width: 600px) {
+	.foot {
+		width: 100%;
+		height: 350px;
+		justify-content: center;
+	}
+
+	.lista-footer {
+		padding-left: 0px;
+	}
+
+	.area-footer {
+		display: flex;
+		justify-content: center;
+	}
+
+	address {
+		text-align: center;
+	}
+
+	.foot ul {
+		text-align: center;
+	}
+
 }

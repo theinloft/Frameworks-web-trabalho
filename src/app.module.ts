@@ -13,11 +13,13 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // deixa as env vars disponíveis em toda a aplicação
+      isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -33,7 +35,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         synchronize: true,
         entities: [Produto, Categoria, Cliente, Usuario],
         ssl:
-          configService.get<string>('NODE_ENV') === 'production'
+          configService.get<string>('DATABASE_SSL') === 'true'
             ? { rejectUnauthorized: false }
             : false,
       }),
@@ -50,6 +52,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     PedidoModule,
     UsuarioModule,
     AuthModule,
+     HealthModule
   ],
 })
 export class AppModule {}

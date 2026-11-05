@@ -1,4 +1,5 @@
 import styles from "./Modal.module.css";
+import { mascararTelefone, mascararDocumento } from '../../utils/mascaras';
 
 type Campo = {
   label: string;
@@ -30,6 +31,13 @@ export default function Modal({
   labelConfirmar = "SALVAR",
   onChangeImagem,
 }: Props) {
+
+  function formatarValor(tipo: string | undefined, valor: string): string {
+    if (tipo === 'telefone') return mascararTelefone(valor);
+    if (tipo === 'documento') return mascararDocumento(valor);
+    return valor;
+  }
+
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
@@ -54,10 +62,10 @@ export default function Modal({
             ) : (
               <input
                 className={styles.input}
-                type={c.tipo ?? "text"}
-                inputMode={c.tipo === "number" ? "decimal" : undefined}
-                value={(form[c.chave] as string) ?? ""}
-                onChange={(e) => onChange(c.chave, e.target.value)}
+                type={c.tipo === 'telefone' || c.tipo === 'documento' ? 'text' : (c.tipo ?? 'text')}
+                inputMode={c.tipo === 'number' ? 'decimal' : undefined}
+                value={(form[c.chave] as string) ?? ''}
+                onChange={(e) => onChange(c.chave, formatarValor(c.tipo, e.target.value))}
               />
             )}
           </div>

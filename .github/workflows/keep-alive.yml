@@ -1,0 +1,22 @@
+name: Keep API alive
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [dev, prod]
+    steps:
+      - name: Ping ${{ matrix.env }}
+        env:
+          API_URL: ${{ matrix.env == 'dev' && secrets.API_URL_DEV || secrets.API_URL_PROD }}
+        run: |
+          curl --fail --silent --show-error \
+            --retry 3 --retry-delay 10 --max-time 60 \
+            "$API_URL/health"

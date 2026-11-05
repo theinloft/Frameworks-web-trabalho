@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './footer.css';
 import IonIcon from '@reacticons/ionicons';
 
@@ -11,6 +12,17 @@ export function Footer() {
                     <p>Avenida Lavras, 329 - Petrópolis</p>
                     <p> Porto Alegre - RS Telefone: (51) 3215-1111</p>
                 </address>
+
+                <div className="lista-footer">
+                    <ul className="footer-links">
+                        <li>
+                            <Link to={"/cases-clientes"}>Case de Clientes</Link>{" "}
+                        </li>
+                        <li>
+                            <Link to={"/fale-conosco"}>Fale Conosco</Link>
+                        </li>
+                    </ul>
+                </div>
 
                 <nav>
                     <ul className="social-nav">

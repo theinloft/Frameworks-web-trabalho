@@ -10,28 +10,28 @@ export function Service() {
     return (
         <section className="projects" id="projects">
             <div className="project imagem1">
-                <Link to={"/fale-conosco"}>
+                <Link to={"/demoprodutos"}>
                     <img src={image1} alt="imagem de produtos"></img>
                     <p>produtos</p>
                 </Link>
             </div>
             <div className="project imagem2">
-                <a href="">
+                <Link to={"/democlientes"}>
                     <img src={image2} alt="imagem de clientes"></img>
                     <p>clientes</p>
-                </a>
+                </Link>
             </div>
             <div className="project imagem3">
-                <a href="">
+                <Link to={"/demopedidos"}>
                     <img src={image3} alt="imagem de pedidos"></img>
                     <p>Pedidos</p>
-                </a>
+                </Link>
             </div>
             <div className="project imagem4">
-                <a href="">
+                <Link to={"/demopainel"}>
                     <img src={image4} alt="imagem de painel"></img>
                     <p>painel</p>
-                </a>
+                </Link>
             </div>
         </section>
     )

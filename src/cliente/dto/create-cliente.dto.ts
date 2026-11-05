@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MinLength, ValidateIf } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { cpfcnpjvalidator } from '../validators/cpf-cnpj.validator';
 
 export class CreateClienteDto {
   @ApiProperty({
@@ -17,4 +18,17 @@ export class CreateClienteDto {
   })
   @IsEmail()
   email?: string;
+
+ @ValidateIf((o) => o.telefone !== '' && o.telefone !== undefined)
+  @IsString()
+  @Matches(/^\d{10,11}$/, {
+    message: 'Telefone deve conter 10 ou 11 dígitos (com DDD)',
+  })
+  telefone?: string;
+
+  @IsOptional()
+  @cpfcnpjvalidator()
+  documento?: string;
+
 }
+

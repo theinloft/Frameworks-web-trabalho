@@ -17,6 +17,14 @@ const Categorias = lazy(() => import('./Pages/Categoria/Categoria'));
 const NovoPedido = lazy(() => import('./Pages/Pedidos/NovoPedido'));
 const EditarPedido = lazy(() => import('./Pages/Pedidos/EditarPedido'));
 const GaleriaCases = lazy(() => import('./Pages/CaseClientes/CaseClientes'));
+const Relatorios = lazy(() => import('./Pages/Relatorios/Relatorios'))
+import Democlientes from "./Pages/Democlientes/Democlientes";
+import Demoprodutos from "./Pages/Demoprodutos/Demoprodutos";
+import Demopedidos from "./Pages/Demopedidos/Demopedidos";
+import Demopainel from "./Pages/Demopainel/Demopainel";
+
+
+
 
 function App() {
   return (
@@ -29,6 +37,10 @@ function App() {
             <Route path="/cadastro-cliente" element={<CadastroCliente />} />
             <Route path="/fale-conosco" element={<FaleConosco />} />
             <Route path="/cases-clientes" element={<GaleriaCases />} />
+            <Route path="/democlientes" element={<Democlientes />} />
+            <Route path="/demoprodutos" element={<Demoprodutos />} />
+            <Route path="/demopedidos" element={<Demopedidos />} />
+            <Route path="/demopainel" element={<Demopainel />} />
 
             <Route element={<LayoutPainel />}>
               <Route path="/painel" element={<Painel />} />
@@ -38,6 +50,7 @@ function App() {
               <Route path="/categorias" element={<Categorias />} />
               <Route path="/pedidos/novo" element={<NovoPedido />} />
               <Route path="/pedidos/editar/:id" element={<EditarPedido />} />
+              <Route path="/relatorios" element={<Relatorios />} />
             </Route>
           </Route>
         </Routes>

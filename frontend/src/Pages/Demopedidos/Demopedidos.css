@@ -1,0 +1,151 @@
+.imagem {
+    display: flex;
+    justify-content: center;
+}
+
+picture img {
+    height: 400px;
+    width: 100%;
+}
+
+.return {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.btn-know-more{
+    font-size: 1rem;
+    font-weight: 600;
+    align-self: flex-start;
+    text-decoration: none;
+    color: #fff;
+    background-color: #ff5722;
+    padding: 12px 28px;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(255, 87, 34, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-know-more:hover{
+    background-color: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(255, 87, 34, 0.35);
+}
+
+.btn-know-more:active{
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+}
+
+/* Accordion de depoimentos - versão controlada por React (useState) */
+
+#demopedidos {
+    min-height: 420px;
+    width: 100%;
+    padding: 20px 0;
+    background-color: #f7f1e2;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+#demopedidos h2 {
+    font-size: 40px;
+    color: #F28A21;
+    text-align: center;
+    padding: 14px 0px 24px 0px;
+    font-family: "Arial Black", Arial, sans-serif;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    color: var(--rust);
+    text-transform: uppercase;
+}
+
+.accordion {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+}
+
+/* Card */
+.cardcli {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Cabeçalho do card */
+.card-header {
+    background-color: #F28A21;
+    padding: 0;
+}
+
+.card-header .mb-0 {
+    margin: 0;
+}
+
+/* Botão que abre/fecha o item */
+.btn-link {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #8B4A08;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 20px;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.btn-link:focus,
+.btn-link:hover {
+    text-decoration: none;
+    color: #f5c800;
+    outline: none;
+}
+
+/* Indicador visual (seta) de aberto/fechado */
+.btn-link::after {
+    content: "+";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    transition: transform 0.2s ease;
+}
+
+.btn-link[aria-expanded="true"]::after {
+    content: "−";
+}
+
+/* Corpo colapsável */
+.collapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    background-color: #fff;
+}
+
+.collapse.show {
+    max-height: 500px;
+    /* alto o suficiente pro maior texto */
+}
+
+.card-body {
+    padding: 0 20px;
+    transition: padding 0.3s ease;
+    line-height: 1.5;
+    color: #333;
+}
+
+.collapse.show .card-body {
+    padding: 16px 20px;
+}

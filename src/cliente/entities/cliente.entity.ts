@@ -8,15 +8,21 @@ export class Cliente {
   @Column()
   nome?: string;
 
+  @Column({ nullable: true })
+  telefone?: string;
+
   @Column({
     unique: true,
   })
   email?: string;
 
-       @ManyToOne(() => Usuario, { nullable: false, eager: false })
-      @JoinColumn({ name: 'usuarioId' })
-      usuario!: Usuario;
-    
-      @Column()
-      usuarioId!: number;
+  @ManyToOne(() => Usuario, { nullable: false, eager: false })
+  @JoinColumn({ name: 'usuarioId' })
+  usuario!: Usuario;
+
+  @Column()
+  usuarioId!: number;
+
+  @Column({ nullable: true, unique: true })
+  documento?: string;
 }

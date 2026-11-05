@@ -2,9 +2,8 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    # Roda a cada 3 dias
-    - cron: '0 0 */3 * *'
-  workflow_dispatch: {}  # permite rodar manualmente pela aba "Actions" no GitHub
+    - cron: '0 12 * * *'   # todo dia, 9h no horário de Brasília
+  workflow_dispatch: {}
 
 jobs:
   ping:
@@ -19,14 +18,13 @@ jobs:
           PGPORT: ${{ secrets.DATABASE_PORT }}
           PGUSER: ${{ secrets.DATABASE_USER }}
           PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          PGDATABASE: ${{ secrets.DATABASE_NAME }} 
+          PGDATABASE: ${{ secrets.DATABASE_NAME }}
         run: |
-          echo "Pingando o banco Supabase em $PGHOST:$PGPORT..."
-          psql -c "SELECT 1;" -v ON_ERROR_STOP=1
-
-          if [ $? -eq 0 ]; then
-            echo "Ping bem-sucedido, projeto está ativo."
-          else
-            echo "Ping falhou. Verifique host/porta/usuário/senha."
-            exit 1
-          fi
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE TABLE IF NOT EXISTS keep_alive (
+            id int PRIMARY KEY,
+            last_ping timestamptz NOT NULL
+          );
+          INSERT INTO keep_alive (id, last_ping) VALUES (1, now())
+            ON CONFLICT (id) DO UPDATE SET last_ping = now();
+          SQL

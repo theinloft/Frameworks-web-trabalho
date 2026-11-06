@@ -32,7 +32,8 @@ export default function NovoPedido() {
   const [nomeCliente, setNomeCliente] = useState('');
   const [nomeProduto, setNomeProduto] = useState('');
   const [criando, setCriandoCliente] = useState(false);
-  const [erro, setErro] = useState('');
+  const [erroPedido, setErroPedido] = useState('');
+  const [erroCliente, setErroCliente] = useState('');
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(
     null,
   );
@@ -79,18 +80,19 @@ export default function NovoPedido() {
     });
 
     setQuantidade(1);
+    setErroPedido('');
   }
 
   async function criarPedido() {
     if (!clienteSelecionado) {
-      setErro('Selecione um cliente.');
+      setErroPedido('Selecione um cliente.');
       return;
     }
     if (itensCarrinho.length === 0) {
-      setErro('Adicione pelo menos um produto.');
+      setErroPedido('Adicione pelo menos um produto.');
       return;
     }
-    setErro('');
+    setErroPedido('');
     await fetch(`${API_URL}/api/pedido`, {
       method: 'POST',
       headers: {
@@ -114,10 +116,10 @@ export default function NovoPedido() {
 
   async function criarCliente() {
     if (!form.nome.trim() || !form.email.trim()) {
-      setErro('Nome e email são campos obrigatórios.');
+      setErroCliente('Nome e email são campos obrigatórios.');
       return;
     }
-    setErro('');
+    setErroCliente('');
     const res = await fetch(`${API_URL}/api/cliente`, {
       method: 'POST',
       headers: {
@@ -176,7 +178,7 @@ export default function NovoPedido() {
                 className={styles.btnNovo}
                 onClick={() => {
                   setCriandoCliente(true);
-                  setErro('');
+                  setErroCliente('');
                   setForm({ nome: '', email: '' });
                 }}
               >
@@ -192,14 +194,14 @@ export default function NovoPedido() {
             titulo="NOVO CLIENTE"
             campos={camposClientes}
             form={form}
-            erro={erro}
+            erro={erroCliente}
             onChange={(chave, valor) =>
               setForm((f) => ({ ...f, [chave]: valor }))
             }
             onConfirmar={criarCliente}
             onCancelar={() => {
               setCriandoCliente(false);
-              setErro('');
+              setErroCliente('');
             }}
             labelConfirmar="CRIAR"
           />
@@ -277,7 +279,7 @@ export default function NovoPedido() {
               </div>
             )}
 
-            {erro && <p className={styles.erro}>{erro}</p>}
+            {erroPedido && <p className={styles.erro}>{erroPedido}</p>}
 
             <button className={styles.btnCriar} onClick={criarPedido}>
               CONFIRMAR PEDIDO

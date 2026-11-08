@@ -10,3 +10,10 @@ export class LoginDto {
   @IsString()
   senha!: string;
 }
+
+export class VerificarEmailDto {
+  @ApiProperty() @IsString() token!: string;
+}
+export class ReenviarVerificacaoDto {
+  @ApiProperty() @IsEmail({}, { message: 'Email inválido.' }) email!: string;
+}

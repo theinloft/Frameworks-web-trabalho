@@ -43,4 +43,8 @@ export class UsuariosService {
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
     return this.repo.remove(usuario);
   }
+
+  async marcarEmailVerificado(id: number | string) {
+  await this.repo.update(id, { emailVerificado: true });
+}
 }

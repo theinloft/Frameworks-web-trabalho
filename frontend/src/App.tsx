@@ -22,6 +22,7 @@ import Democlientes from "./Pages/Democlientes/Democlientes";
 import Demoprodutos from "./Pages/Demoprodutos/Demoprodutos";
 import Demopedidos from "./Pages/Demopedidos/Demopedidos";
 import Demopainel from "./Pages/Demopainel/Demopainel";
+import VerificarEmail from './Pages/VerificarEmail/VerificarEmail';
 
 
 
@@ -41,6 +42,7 @@ function App() {
             <Route path="/demoprodutos" element={<Demoprodutos />} />
             <Route path="/demopedidos" element={<Demopedidos />} />
             <Route path="/demopainel" element={<Demopainel />} />
+            <Route path="/verificar-email" element={<VerificarEmail />} />
 
             <Route element={<LayoutPainel />}>
               <Route path="/painel" element={<Painel />} />

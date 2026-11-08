@@ -15,6 +15,9 @@ export class Usuario {
   @Column({ nullable: false })
   senha?: string;
 
+   @Column({ default: false })
+  emailVerificado?: boolean;
+
   @Column({
     type: 'enum',
     enum: Perfil,

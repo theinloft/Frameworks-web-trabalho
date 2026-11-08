@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEmail, IsString, IsOptional, MinLength } from 'class-validator';
 
 export class CreateUsuarioDto {
   @ApiProperty()
@@ -7,10 +8,12 @@ export class CreateUsuarioDto {
   nome!: string;
 
   @ApiProperty()
-  @IsEmail()
+  @Transform(({ value }) => typeof value === 'string' ? value.trim().toLowerCase() : value)
+  @IsEmail({},{message:'Email inválido.'})
   email!: string;
 
   @ApiProperty()
   @IsString()
+  @MinLength(4)
   senha!: string;
 }

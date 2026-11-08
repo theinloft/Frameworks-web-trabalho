@@ -81,7 +81,7 @@ export default function Pedido() {
       const erro = await response.json().catch(() => null);
       setErroConcluir(
         erro?.message ??
-        'Não foi possível concluir o pedido. Tente novamente.',
+        'Nï¿½o foi possï¿½vel concluir o pedido. Tente novamente.',
       );
       return;
     }
@@ -117,7 +117,7 @@ export default function Pedido() {
               <span>DATA/HORA</span>
               <span>NUMERO DO PEDIDO</span>
               <span>STATUS PEDIDO</span>
-              <span>AÇÕES</span>
+              <span>AÃ‡Ã•ES</span>
             </div>
             {paginar(pedidos ?? [], pagPedidos, POR_PAGINA).map((p) => (
               <div key={p.id} className={styles.row}>
@@ -125,7 +125,7 @@ export default function Pedido() {
                   className={styles.celula}
                   onClick={() => setVisualizando(p)}
                 >
-                  {p.cliente?.nome ?? '—'}
+                  {p.cliente?.nome ?? 'ï¿½'}
                 </span>
                 <span className={styles.celulaSecundaria}>
                   {format(new Date(p.horarioPedido), 'dd/MM/yyyy HH:mm', {

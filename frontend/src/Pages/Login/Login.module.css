@@ -106,3 +106,20 @@
 .link:hover {
   text-decoration: underline;
 }
+
+.aviso {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.texto {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+}

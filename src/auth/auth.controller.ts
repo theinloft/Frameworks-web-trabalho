@@ -1,5 +1,5 @@
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto, ReenviarVerificacaoDto, VerificarEmailDto } from './dto/login.dto';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Throttle } from '@nestjs/throttler';
@@ -15,4 +15,15 @@ export class AuthController {
   login(@Body() body: LoginDto) {
     return this.authService.login(body.email, body.senha);
   }
+
+  @Post('verificar-email')
+verificarEmail(@Body() body: VerificarEmailDto) {
+  return this.authService.verificarEmail(body.token);
+}
+
+@Post('reenviar-verificacao')
+@Throttle({ default: { ttl: 60000, limit: 3 } })
+reenviar(@Body() body: ReenviarVerificacaoDto) {
+  return this.authService.reenviarVerificacao(body.email);
+}
 }

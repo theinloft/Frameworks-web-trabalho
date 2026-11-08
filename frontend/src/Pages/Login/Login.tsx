@@ -8,6 +8,9 @@ function Login() {
   const [form, setForm] = useState({ email: '', senha: '' });
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
+  const [emailPendente, setEmailPendente] = useState(false);
+  const [aviso, setAviso] = useState('');
+  const [reenviando, setReenviando] = useState(false);
 
   function atualizar(campo: string, valor: string) {
     setForm((prev) => ({ ...prev, [campo]: valor }));
@@ -15,6 +18,8 @@ function Login() {
 
   async function entrar() {
     setErro('');
+    setAviso('');
+    setEmailPendente(false);
     setCarregando(true);
 
     try {
@@ -27,7 +32,12 @@ function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setErro(data.message || 'Erro ao fazer login.');
+        if (res.status === 403) setEmailPendente(true);
+        setErro(
+          Array.isArray(data.message)
+            ? data.message.join(' ')
+            : data.message || 'Erro ao fazer login.',
+        );
         return;
       }
 
@@ -40,6 +50,31 @@ function Login() {
       setCarregando(false);
     }
   }
+
+  async function reenviar() {
+  setAviso('');
+  setReenviando(true);
+  try {
+    const res = await fetch(`${API_URL}/api/auth/reenviar-verificacao`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: form.email }),
+    });
+    if (res.status === 429) {
+      setAviso('Muitas tentativas. Aguarde um minuto e tente de novo.');
+    } else if (res.status === 400) {
+      setAviso('Informe um email válido.');
+    } else {
+      setAviso(
+        'Se o email existir e ainda não estiver confirmado, enviamos um novo link.',
+      );
+    }
+  } catch {
+    setAviso('Não foi possível conectar ao servidor.');
+  } finally {
+    setReenviando(false);
+  }
+}
 
   return (
     <main className={styles.main}>
@@ -69,6 +104,13 @@ function Login() {
         </div>
 
         {erro && <p className={styles.erro}>{erro}</p>}
+
+        {emailPendente && (
+          <button className={styles.btn} onClick={reenviar} disabled={reenviando}>
+            {reenviando ? 'ENVIANDO...' : 'REENVIAR LINK DE CONFIRMAÇÃO'}
+          </button>
+        )}
+        {aviso && <p className={styles.aviso}>{aviso}</p>}
 
         <button className={styles.btn} onClick={entrar} disabled={carregando}>
           {carregando ? 'ENTRANDO...' : 'ENTRAR'}

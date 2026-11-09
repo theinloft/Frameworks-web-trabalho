@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import styles from './Login.module.css';
 import { API_URL } from '../../config/api';
 
@@ -16,17 +17,17 @@ function Login() {
     setForm((prev) => ({ ...prev, [campo]: valor }));
   }
 
-  async function entrar() {
+  async function autenticar(caminho: string, corpo: object) {
     setErro('');
     setAviso('');
     setEmailPendente(false);
     setCarregando(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}${caminho}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(corpo),
       });
 
       const data = await res.json();
@@ -51,30 +52,42 @@ function Login() {
     }
   }
 
-  async function reenviar() {
-  setAviso('');
-  setReenviando(true);
-  try {
-    const res = await fetch(`${API_URL}/api/auth/reenviar-verificacao`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.email }),
-    });
-    if (res.status === 429) {
-      setAviso('Muitas tentativas. Aguarde um minuto e tente de novo.');
-    } else if (res.status === 400) {
-      setAviso('Informe um email válido.');
-    } else {
-      setAviso(
-        'Se o email existir e ainda não estiver confirmado, enviamos um novo link.',
-      );
-    }
-  } catch {
-    setAviso('Não foi possível conectar ao servidor.');
-  } finally {
-    setReenviando(false);
+  function entrar() {
+    return autenticar('/api/auth/login', form);
   }
-}
+
+  function entrarComGoogle(resposta: CredentialResponse) {
+    if (!resposta.credential) {
+      setErro('Não foi possível entrar com o Google.');
+      return;
+    }
+    return autenticar('/api/auth/google', { credential: resposta.credential });
+  }
+
+  async function reenviar() {
+    setAviso('');
+    setReenviando(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/reenviar-verificacao`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email }),
+      });
+      if (res.status === 429) {
+        setAviso('Muitas tentativas. Aguarde um minuto e tente de novo.');
+      } else if (res.status === 400) {
+        setAviso('Informe um email válido.');
+      } else {
+        setAviso(
+          'Se o email existir e ainda não estiver confirmado, enviamos um novo link.',
+        );
+      }
+    } catch {
+      setAviso('Não foi possível conectar ao servidor.');
+    } finally {
+      setReenviando(false);
+    }
+  }
 
   return (
     <main className={styles.main}>
@@ -106,7 +119,11 @@ function Login() {
         {erro && <p className={styles.erro}>{erro}</p>}
 
         {emailPendente && (
-          <button className={styles.btn} onClick={reenviar} disabled={reenviando}>
+          <button
+            className={styles.btn}
+            onClick={reenviar}
+            disabled={reenviando}
+          >
             {reenviando ? 'ENVIANDO...' : 'REENVIAR LINK DE CONFIRMAÇÃO'}
           </button>
         )}
@@ -119,6 +136,17 @@ function Login() {
         <button className={styles.btn} onClick={() => navigate('/')}>
           VOLTAR
         </button>
+
+        <p className={styles.divisor}>OU</p>
+        <div className={styles.google}>
+          <GoogleLogin
+            onSuccess={entrarComGoogle}
+            onError={() => setErro('Não foi possível entrar com o Google.')}
+            theme="filled_black"
+            shape="rectangular"
+            width="284"
+          />
+        </div>
 
         <p className={styles.rodape}>
           Não tem conta?{' '}

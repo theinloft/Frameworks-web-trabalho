@@ -47,4 +47,19 @@ export class UsuariosService {
   async marcarEmailVerificado(id: number | string) {
   await this.repo.update(id, { emailVerificado: true });
 }
+
+async criarSocial(dados: { nome: string; email: string }) {
+  const usuario = this.repo.create({
+    nome: dados.nome,
+    email: dados.email,
+    senha: null,
+    emailVerificado: true,
+    perfil: Perfil.USUARIO,
+  });
+  return this.repo.save(usuario);
+}
+
+async ativarViaProvedor(id: number) {
+  await this.repo.update(id, { emailVerificado: true, senha: null });
+}
 }

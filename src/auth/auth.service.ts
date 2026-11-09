@@ -1,9 +1,16 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+   import {
+     BadRequestException,
+     ForbiddenException,
+     Injectable,
+     InternalServerErrorException,
+     UnauthorizedException,
+   } from '@nestjs/common';
+   import { OAuth2Client, type TokenPayload } from 'google-auth-library';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Usuario } from '../usuario/entities/usuario.entity';
 import { UsuariosService } from '../usuario/usuario.service';
-import { VerificacaoEmailService } from 'src/email/verificacao-email.service';
+import { VerificacaoEmailService } from '../email/verificacao-email.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,21 +28,57 @@ export class AuthService {
     const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
     if (!senhaCorreta) throw new UnauthorizedException('Senha incorreta');
 
-    
-     if (!usuario.emailVerificado)
-    throw new ForbiddenException('Confirme seu email para entrar');
+    if (!usuario.emailVerificado)
+      throw new ForbiddenException('Confirme seu email para entrar');
 
-
-    const payload = {
-      id: usuario.id,
-      email: usuario.email,
-      perfil: usuario.perfil,
-    };
-    return {
-      token: this.jwtService.sign(payload),
-      usuario: { id: usuario.id, nome: usuario.nome, perfil: usuario.perfil },
-    };
+    return this.gerarSessao(usuario);
   }
+  private gerarSessao(usuario: Usuario) {
+  const payload = {
+    id: usuario.id,
+    email: usuario.email,
+    perfil: usuario.perfil,
+  };
+  return {
+    token: this.jwtService.sign(payload),
+    usuario: { id: usuario.id, nome: usuario.nome, perfil: usuario.perfil },
+  };
+}
+
+async loginGoogle(credential: string) {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId)
+    throw new InternalServerErrorException('Login com Google não configurado');
+
+  let payload: TokenPayload | undefined;
+  try {
+    const ticket = await new OAuth2Client(clientId).verifyIdToken({
+      idToken: credential,
+      audience: clientId,
+    });
+    payload = ticket.getPayload();
+  } catch {
+    throw new UnauthorizedException('Token do Google inválido');
+  }
+  if (!payload?.email || !payload.email_verified)
+    throw new UnauthorizedException('Email do Google não verificado');
+
+  const email = payload.email.toLowerCase();
+  let usuario = await this.usuariosService.buscarPorEmail(email);
+
+  if (!usuario) {
+    usuario = await this.usuariosService.criarSocial({
+      nome: payload.name ?? email,
+      email,
+    });
+  } else if (!usuario.emailVerificado && usuario.id !== undefined) {
+    await this.usuariosService.ativarViaProvedor(usuario.id);
+    usuario.emailVerificado = true;
+    usuario.senha = null;
+  }
+
+  return this.gerarSessao(usuario);
+}
 
   async verificarEmail(token: string) {
   let payload: { sub: number | string; tipo: string };

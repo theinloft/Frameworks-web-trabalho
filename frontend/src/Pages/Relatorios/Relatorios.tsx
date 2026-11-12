@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import styles from './Relatorios.module.css';
 import { useApi } from '../../hooks/useApi';
+import { FormaPagamento, FORMA_PAGAMENTO_LABELS } from '../../types/pedido';
 
-const API_URL = import.meta.env.VITE_API_URL; 
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Filtros = {
     dataInicio: string;
@@ -11,8 +13,8 @@ type Filtros = {
 };
 
 type ResumoPagamento = {
-    formaPagamento: string;
-    quantidade: string; 
+    formaPagamento: FormaPagamento | null;
+    quantidade: string;
     total: string;
 };
 
@@ -37,7 +39,7 @@ export default function Relatorios() {
     const [erroExportar, setErroExportar] = useState('');
 
     const { data: resumo, erro } = useApi<ResumoPagamento[]>(
-        `${API_URL}/relatorios/pedidos/resumo?${montarQuery(aplicados)}`,
+        `${API_URL}/api/relatorios/pedidos/resumo?${montarQuery(aplicados)}`,
     );
 
     function atualizar(campo: keyof Filtros, valor: string) {
@@ -52,7 +54,7 @@ export default function Relatorios() {
             const token = localStorage.getItem('token');
             const query = montarQuery(aplicados, { formato });
             const res = await fetch(
-                `${API_URL}/relatorios/pedidos/exportar?${query}`,
+                `${API_URL}/api/relatorios/pedidos/exportar?${query}`,
                 { headers: { Authorization: `Bearer ${token}` } },
             );
             if (!res.ok) throw new Error('Erro ao exportar relatório');
@@ -108,13 +110,13 @@ export default function Relatorios() {
                     <select
                         className={styles.input}
                         value={filtros.formaPagamento}
-                        onChange={(e) => atualizar('formaPagamento', e.target.value)}
-                    >
+                        onChange={(e) => atualizar('formaPagamento', e.target.value)}>
                         <option value="">Todas</option>
-                        <option value="PIX">PIX</option>
-                        <option value="CREDITO">Cartão de crédito</option>
-                        <option value="DEBITO">Cartão de débito</option>
-                        <option value="BOLETO">Boleto</option>
+                        {Object.values(FormaPagamento).map((forma) => (
+                            <option key={forma} value={forma}>
+                                {FORMA_PAGAMENTO_LABELS[forma]}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
@@ -142,7 +144,10 @@ export default function Relatorios() {
             {erroExportar && <p>{erroExportar}</p>}
             {erro && <p>{erro}</p>}
 
-            {resumo && (
+            {resumo && resumo.length === 0 && (
+                <p className={styles.vazio}>Nenhum pedido concluído neste período.</p>
+            )}
+            {resumo && resumo.length > 0 && (
                 <table className={styles.tabela}>
                     <thead>
                         <tr>
@@ -153,8 +158,12 @@ export default function Relatorios() {
                     </thead>
                     <tbody>
                         {resumo.map((linha) => (
-                            <tr key={linha.formaPagamento}>
-                                <td>{linha.formaPagamento}</td>
+                            <tr key={linha.formaPagamento ?? 'nao-informado'}>
+                                <td>
+                                    {linha.formaPagamento
+                                        ? FORMA_PAGAMENTO_LABELS[linha.formaPagamento]
+                                        : 'Não informado'}
+                                </td>
                                 <td>{Number(linha.quantidade)}</td>
                                 <td>
                                     {Number(linha.total).toLocaleString('pt-BR', {
@@ -167,6 +176,7 @@ export default function Relatorios() {
                     </tbody>
                 </table>
             )}
+
         </div>
     );
 }

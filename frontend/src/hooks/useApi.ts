@@ -13,8 +13,14 @@ export function useApi<T>(url: string) {
         if (!res.ok) throw new Error('Erro ao buscar dados');
         return res.json();
       })
-      .then(setData)
-      .catch((e) => setErro(e.message));
+      .then((json) => {
+        setData(json);
+        setErro('');
+      })
+      .catch((e) => {
+  setData(null);
+  setErro(e.message);
+});
   }, [url]);
 
   useEffect(() => {

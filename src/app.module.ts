@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './health/health.module';
+import { RelatoriosModule } from './relatorio/relatorios.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { HealthModule } from './health/health.module';
     PedidoModule,
     UsuarioModule,
     AuthModule,
-     HealthModule
+     HealthModule,
+     RelatoriosModule
   ],
 })
 export class AppModule {}

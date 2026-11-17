@@ -204,6 +204,13 @@
   font-family: 'Arial Black', Arial, sans-serif;
 }
 
+.erro {
+  margin: 16px 0;
+  color: #ff5050;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
 @media (max-width: 768px) {
   .page {
     padding: 24px 16px;

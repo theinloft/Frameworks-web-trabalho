@@ -38,5 +38,9 @@ export type Pedido = {
   status: string;
   cliente?: Cliente;
   itens: Item[];
+  agendado?: boolean;
+  temFaixaHorario?: boolean;
+  inicioAtendimento?: string | null;
+  fimAtendimento?: string | null;
 };
 

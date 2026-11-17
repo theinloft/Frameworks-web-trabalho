@@ -5,5 +5,9 @@ export class PedidoResponseDto {
   cliente?: any;
   valorTotal?: number;
   horarioPedido?: Date;
+  agendado?: boolean;
+  temFaixaHorario?: boolean;
+  inicioAtendimento?: Date | null;
+  fimAtendimento?: Date | null;
   itens?: PedidoItemResponseDto[];
 }

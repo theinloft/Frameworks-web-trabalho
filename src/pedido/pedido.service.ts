@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Repository } from 'typeorm';
@@ -12,6 +17,7 @@ import { PedidoResponseDto } from './dto/pedido-response.dto';
 import { Perfil } from 'src/usuario/enums/perfil.enum';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { ConcluirPedidoDto } from './dto/concluir-pedido.dto';
+import { AgendamentoDto } from './dto/agendamento.dto';
 
 @Injectable()
 export class PedidoService {
@@ -28,6 +34,14 @@ export class PedidoService {
   async create(_createPedidoDto: CreatePedidoDto,usuarioLogado: { id: number }) {
     
     await this.pedidoValidator.validatePedido(_createPedidoDto);
+    const agendamento = this.normalizarAgendamento(_createPedidoDto);
+    if (agendamento.temFaixaHorario) {
+      await this.validarFaixa(
+        usuarioLogado.id,
+        agendamento.inicioAtendimento!,
+        agendamento.fimAtendimento!,
+      );
+    }
     const itensPedido: PedidoItem[] = [];
 
     for (const itemDto of _createPedidoDto.itens) {
@@ -62,6 +76,7 @@ export class PedidoService {
       valorTotal,
 
       itens: itensPedido,
+      ...agendamento,
        usuario: { id: usuarioLogado.id } as Usuario,
     });
 
@@ -179,6 +194,20 @@ export class PedidoService {
         .toFixed(2),
     );
 
+    if (dto.agendado !== undefined) {
+      const agendamento = this.normalizarAgendamento(dto);
+      if (agendamento.temFaixaHorario) {
+        // ignora o próprio pedido: ele pode alterar a faixa que já ocupa
+        await this.validarFaixa(
+          pedido.usuarioId,
+          agendamento.inicioAtendimento!,
+          agendamento.fimAtendimento!,
+          pedido.id,
+        );
+      }
+      Object.assign(pedido, agendamento);
+    }
+
     pedido.status = StatusPedido.ANDAMENTO;
 
     const pedidoSalvo = await this.pedidoRepo.save(pedido);
@@ -208,6 +237,21 @@ export class PedidoService {
   ): Promise<Pedido> {
     const pedido = await this.findOne(id, usuarioLogado);
     if (!pedido) throw new NotFoundException('Pedido não encontrado');
+    if (
+      status !== StatusPedido.CANCELADO &&
+      pedido.status === StatusPedido.CANCELADO &&
+      pedido.temFaixaHorario &&
+      pedido.inicioAtendimento &&
+      pedido.fimAtendimento
+    ) {
+      // reativar um pedido cancelado volta a ocupar a faixa: confere de novo
+      await this.validarFaixa(
+        pedido.usuarioId,
+        pedido.inicioAtendimento,
+        pedido.fimAtendimento,
+        pedido.id,
+      );
+    }
     pedido.status = status;
     return this.pedidoRepo.save(pedido);
   }
@@ -233,12 +277,74 @@ export class PedidoService {
   return this.pedidoRepo.save(pedido);
 }
 
+  private normalizarAgendamento(dto: AgendamentoDto) {
+    if (!dto.agendado) {
+      return {
+        agendado: false,
+        temFaixaHorario: false,
+        inicioAtendimento: null,
+        fimAtendimento: null,
+      };
+    }
+
+    const inicio = new Date(dto.inicioAtendimento!);
+    const temFaixa = dto.temFaixaHorario === true;
+    const fim = temFaixa ? new Date(dto.fimAtendimento!) : null;
+
+    if (temFaixa && fim!.getTime() <= inicio.getTime()) {
+      throw new BadRequestException('O fim deve ser depois do início');
+    }
+
+    return {
+      agendado: true,
+      temFaixaHorario: temFaixa,
+      inicioAtendimento: inicio,
+      fimAtendimento: fim,
+    };
+  }
+
+  private async validarFaixa(
+    usuarioId: number,
+    inicio: Date,
+    fim: Date,
+    ignorarPedidoId?: string,
+  ) {
+    const qb = this.pedidoRepo
+      .createQueryBuilder('p')
+      .where('p.usuarioId = :usuarioId', { usuarioId })
+      .andWhere('p.temFaixaHorario = true')
+      .andWhere('p.status <> :cancelado', { cancelado: StatusPedido.CANCELADO })
+      .andWhere('p.inicioAtendimento < :fim', { fim })
+      .andWhere('p.fimAtendimento > :inicio', { inicio });
+
+    if (ignorarPedidoId) {
+      qb.andWhere('p.id <> :ignorarPedidoId', { ignorarPedidoId });
+    }
+
+    const conflito = await qb.getOne();
+    if (conflito) {
+      const hora = (d: Date) =>
+        d.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'America/Sao_Paulo',
+        });
+      throw new ConflictException(
+        `Já existe um atendimento nesse horário (${hora(conflito.inicioAtendimento!)}–${hora(conflito.fimAtendimento!)})`,
+      );
+    }
+  }
+
   private toResponse(pedido: Pedido): PedidoResponseDto {
     return {
       id: pedido.id,
       cliente: pedido.cliente,
       valorTotal: pedido.valorTotal,
       horarioPedido: pedido.horarioPedido,
+      agendado: pedido.agendado,
+      temFaixaHorario: pedido.temFaixaHorario,
+      inicioAtendimento: pedido.inicioAtendimento,
+      fimAtendimento: pedido.fimAtendimento,
       itens: pedido.itens.map((item) => ({
         id: item.id,
         produto: item.produto,

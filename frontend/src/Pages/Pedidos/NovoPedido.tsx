@@ -5,6 +5,13 @@ import Modal from '../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import BuscaAutoCompletar from '../../components/BuscaAutoCompletar/BuscaAutoCompletar';
 import { API_URL } from '../../config/api';
+import AgendamentoPedido from '../../components/AgendamentoPedido/AgendamentoPedido';
+import {
+  AGENDAMENTO_VAZIO,
+  agendamentoParaPayload,
+  mensagemDeErro,
+  validarAgendamento,
+} from '../../components/AgendamentoPedido/agendamento';
 
 type Cliente = {
   id: string;
@@ -34,6 +41,7 @@ export default function NovoPedido() {
   const [criando, setCriandoCliente] = useState(false);
   const [erroPedido, setErroPedido] = useState('');
   const [erroCliente, setErroCliente] = useState('');
+  const [agendamento, setAgendamento] = useState(AGENDAMENTO_VAZIO);
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(
     null,
   );
@@ -92,8 +100,13 @@ export default function NovoPedido() {
       setErroPedido('Adicione pelo menos um produto.');
       return;
     }
+    const erroAgendamento = validarAgendamento(agendamento);
+    if (erroAgendamento) {
+      setErroPedido(erroAgendamento);
+      return;
+    }
     setErroPedido('');
-    await fetch(`${API_URL}/api/pedido`, {
+    const res = await fetch(`${API_URL}/api/pedido`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -105,8 +118,15 @@ export default function NovoPedido() {
           produtoId: i.produto.id,
           quantidade: i.quantidade,
         })),
+        ...agendamentoParaPayload(agendamento),
       }),
     });
+    if (!res.ok) {
+      setErroPedido(
+        await mensagemDeErro(res, 'Não foi possível criar o pedido.'),
+      );
+      return;
+    }
     navigate('/pedidos');
   }
 
@@ -186,6 +206,8 @@ export default function NovoPedido() {
               </button>
             </div>
           </div>
+
+          <AgendamentoPedido value={agendamento} onChange={setAgendamento} />
         </div>
         <br></br>
 

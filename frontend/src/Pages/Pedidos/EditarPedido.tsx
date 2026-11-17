@@ -6,6 +6,14 @@ import Modal from '../../components/Modal/Modal';
 import BuscaAutoCompletar from '../../components/BuscaAutoCompletar/BuscaAutoCompletar';
 import { API_URL } from '../../config/api';
 import type { Pedido } from '../../types/pedido';
+import AgendamentoPedido from '../../components/AgendamentoPedido/AgendamentoPedido';
+import {
+  AGENDAMENTO_VAZIO,
+  agendamentoDoPedido,
+  agendamentoParaPayload,
+  mensagemDeErro,
+  validarAgendamento,
+} from '../../components/AgendamentoPedido/agendamento';
 
 type Cliente = {
   id: string;
@@ -37,6 +45,7 @@ export default function EditarPedido() {
   const [nomeProduto, setNomeProduto] = useState('');
   const [criando, setCriandoCliente] = useState(false);
   const [erro, setErro] = useState('');
+  const [agendamento, setAgendamento] = useState(AGENDAMENTO_VAZIO);
   const [carregando, setCarregando] = useState(true);
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(
     null,
@@ -86,6 +95,7 @@ export default function EditarPedido() {
             quantidade: item.quantidade,
           })),
         );
+        setAgendamento(agendamentoDoPedido(pedido));
       } catch {
         setErro('Não foi possível conectar ao servidor.');
       } finally {
@@ -129,6 +139,11 @@ export default function EditarPedido() {
       setErro('Adicione pelo menos um produto.');
       return;
     }
+    const erroAgendamento = validarAgendamento(agendamento);
+    if (erroAgendamento) {
+      setErro(erroAgendamento);
+      return;
+    }
     setErro('');
 
     const res = await fetch(`${API_URL}/api/pedido/${id}`, {
@@ -143,11 +158,14 @@ export default function EditarPedido() {
           produtoId: i.produto.id,
           quantidade: i.quantidade,
         })),
+        ...agendamentoParaPayload(agendamento),
       }),
     });
 
     if (!res.ok) {
-      setErro('Não foi possível salvar as alterações.');
+      setErro(
+        await mensagemDeErro(res, 'Não foi possível salvar as alterações.'),
+      );
       return;
     }
 
@@ -232,6 +250,8 @@ export default function EditarPedido() {
               </button>
             </div>
           </div>
+
+          <AgendamentoPedido value={agendamento} onChange={setAgendamento} />
         </div>
         <br></br>
 

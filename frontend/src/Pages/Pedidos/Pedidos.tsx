@@ -23,6 +23,9 @@ const statusCor: Record<string, string> = {
 
 export default function Pedido() {
   const [pagPedidos, setPagProdutos] = useState(1);
+  const [filtro, setFiltro] = useState<'todos' | 'comuns' | 'agendados'>(
+    'todos',
+  );
 
   const [visualizando, setVisualizando] = useState<Pedido | null>(null);
 
@@ -96,6 +99,19 @@ export default function Pedido() {
     setPedidoParaConcluir(null);
   }
 
+  const pedidosFiltrados = (pedidos ?? []).filter((p) =>
+    filtro === 'todos' ? true : filtro === 'agendados' ? p.agendado : !p.agendado,
+  );
+
+  function formatarAtendimento(p: Pedido) {
+    if (!p.agendado || !p.inicioAtendimento) return '—';
+    const inicio = new Date(p.inicioAtendimento);
+    const dia = format(inicio, 'dd/MM HH:mm', { locale: ptBR });
+    return p.temFaixaHorario && p.fimAtendimento
+      ? `${dia}–${format(new Date(p.fimAtendimento), 'HH:mm', { locale: ptBR })}`
+      : dia;
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -108,6 +124,20 @@ export default function Pedido() {
           + NOVO PEDIDO
         </button>
       </div>
+      <div className={styles.filtros}>
+        {(['todos', 'comuns', 'agendados'] as const).map((f) => (
+          <button
+            key={f}
+            className={`${styles.filtro} ${filtro === f ? styles.filtroAtivo : ''}`}
+            onClick={() => {
+              setFiltro(f);
+              setPagProdutos(1);
+            }}
+          >
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
       <div>
         <div>
           <section className={styles.secao}>
@@ -116,16 +146,20 @@ export default function Pedido() {
               <span>CLIENTE</span>
               <span>DATA/HORA</span>
               <span>NUMERO DO PEDIDO</span>
+              <span>ATENDIMENTO</span>
               <span>STATUS PEDIDO</span>
               <span>AÇÕES</span>
             </div>
-            {paginar(pedidos ?? [], pagPedidos, POR_PAGINA).map((p) => (
+            {paginar(pedidosFiltrados, pagPedidos, POR_PAGINA).map((p) => (
               <div key={p.id} className={styles.row}>
                 <span
                   className={styles.celula}
                   onClick={() => setVisualizando(p)}
                 >
                   {p.cliente?.nome ?? '�'}
+                  {p.agendado && (
+                    <span className={styles.tagAgendado}>AGENDADO</span>
+                  )}
                 </span>
                 <span className={styles.celulaSecundaria}>
                   {format(new Date(p.horarioPedido), 'dd/MM/yyyy HH:mm', {
@@ -133,6 +167,9 @@ export default function Pedido() {
                   })}
                 </span>
                 <span className={styles.celulaSecundaria}>{p.id}</span>
+                <span className={styles.celulaSecundaria}>
+                  {formatarAtendimento(p)}
+                </span>
                 <span
                   className={styles.celulaSecundaria}
                   style={{ color: statusCor[p.status] ?? '#fff' }}
@@ -165,7 +202,7 @@ export default function Pedido() {
             ))}
             <Paginacao
               pagina={pagPedidos}
-              total={pedidos?.length ?? 0}
+              total={pedidosFiltrados.length}
               porPagina={POR_PAGINA}
               onChange={setPagProdutos}
             />

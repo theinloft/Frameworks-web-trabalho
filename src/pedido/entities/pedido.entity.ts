@@ -42,6 +42,18 @@ export class Pedido {
   @Column({ type: 'enum', enum: FormaPagamento, nullable: true })
   formaPagamento?: FormaPagamento;
 
+  @Column({ type: 'boolean', default: false })
+  agendado!: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  temFaixaHorario!: boolean;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  inicioAtendimento?: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  fimAtendimento?: Date | null;
+
   @ManyToOne(() => Cliente)
   cliente!: Cliente;
 

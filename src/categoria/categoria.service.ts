@@ -13,10 +13,10 @@ export class CategoriaService {
     @InjectRepository(Categoria)
     private readonly repositoryCategoria: Repository<Categoria>,
     private readonly categoriaValidator: CategoriaValidator,
-  ) {}
+  ) { }
 
   async create(dto: CreateCategoriaDto, usuarioLogado: { id: number }) {
-    await this.categoriaValidator.validateCategoria(dto);
+    await this.categoriaValidator.validateCategoria(dto, undefined, usuarioLogado.id);
 
     const categoria = this.repositoryCategoria.create({
       ...dto,
@@ -38,14 +38,14 @@ export class CategoriaService {
   async findOne(id: number, usuarioLogado: { id: number; perfil: Perfil }) {
     const categoria = await this.repositoryCategoria.findOne({ where: { id } });
     if (!categoria) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nï¿½o encontrada');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       categoria.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nï¿½o encontrada');
     }
 
     return categoria;
@@ -56,19 +56,23 @@ export class CategoriaService {
     updateCategoriaDto: UpdateCategoriaDto,
     usuarioLogado: { id: number; perfil: Perfil },
   ) {
-    await this.categoriaValidator.validateCategoria(updateCategoriaDto);
-
     const categoria = await this.repositoryCategoria.findOne({ where: { id } });
     if (!categoria) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nÃ£o encontrada');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       categoria.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nÃ£o encontrada');
     }
+
+    await this.categoriaValidator.validateCategoria(
+      updateCategoriaDto,
+      id,
+      categoria.usuarioId,
+    );
 
     Object.assign(categoria, updateCategoriaDto);
     return this.repositoryCategoria.save(categoria);
@@ -77,14 +81,14 @@ export class CategoriaService {
   async remove(id: number, usuarioLogado: { id: number; perfil: Perfil }) {
     const categoria = await this.repositoryCategoria.findOne({ where: { id } });
     if (!categoria) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nï¿½o encontrada');
     }
 
     if (
       usuarioLogado.perfil !== Perfil.ADMIN_MASTER &&
       categoria.usuarioId !== usuarioLogado.id
     ) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Categoria nï¿½o encontrada');
     }
 
     return this.repositoryCategoria.remove(categoria);

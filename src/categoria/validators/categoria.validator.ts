@@ -11,20 +11,32 @@ export class CategoriaValidator {
     @InjectRepository(Categoria)
     private readonly repositoryCategoria: Repository<Categoria>,
   ) {}
-  async validateCategoria(dto: Partial<CreateCategoriaDto>) {
+
+  async validateCategoria(
+    dto: Partial<CreateCategoriaDto>,
+    id?: number,
+    usuarioId?: number,
+  ) {
+    if (dto.categoria === undefined) return;
+
+    if (dto.categoria.trim().length < 3) {
+      throw new BadRequestException('Categoria inválida');
+    }
+
+    if (usuarioId === undefined) {
+      throw new BadRequestException('Usuário não informado');
+    }
+
     const categoriaExiste = await this.repositoryCategoria
       .createQueryBuilder('categoria')
       .where('LOWER(TRIM(categoria.categoria)) = LOWER(TRIM(:categoria))', {
         categoria: dto.categoria,
       })
+      .andWhere('categoria.usuarioId = :usuarioId', { usuarioId })
       .getOne();
 
-    if (categoriaExiste) {
+    if (categoriaExiste && categoriaExiste.id !== id) {
       throw new BadRequestException('Já existe uma categoria com esse nome');
-    }
-
-    if (dto.categoria && dto.categoria.length < 3) {
-      throw new BadRequestException('Categoria inválida');
     }
   }
 }

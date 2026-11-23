@@ -9,20 +9,25 @@ export class ProdutoValidator {
   constructor(
     @InjectRepository(Produto)
     private readonly repositoryProduto: Repository<Produto>,
-  ) {}
+  ) { }
 
-  async validateProduto(dto: CreateProdutoDto, id?: string) {
+  async validateProduto(dto: CreateProdutoDto, id?: string, usuarioId?: number) {
     if (dto.nome) {
+      if (dto.nome.length < 3) {
+        throw new BadRequestException('Nome inválido');
+      }
+
+      if (usuarioId === undefined) {
+        throw new BadRequestException('Usuário não informado');
+      }
+
       const produtoExistente = await this.repositoryProduto.findOneBy({
         nome: dto.nome,
+        usuarioId,
       });
 
       if (produtoExistente && produtoExistente.id !== id) {
-        throw new BadRequestException('Já existe um produto com esse nome');
-      }
-
-      if (dto.nome.length < 3) {
-        throw new BadRequestException('Nome inválido');
+        throw new BadRequestException('Você já tem um produto com esse nome');
       }
     }
 

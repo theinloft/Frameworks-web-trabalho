@@ -20,8 +20,9 @@ export class ProdutoService {
     private readonly categoriaRepo: Repository<Categoria>,
   ) { }
 
-  async create(dto: CreateProdutoDto,usuarioLogado: { id: number }) {
-    await this.produtoValidator.validateProduto(dto);
+  async create(dto: CreateProdutoDto, usuarioLogado: { id: number }) {
+    await this.produtoValidator.validateProduto(dto, undefined, usuarioLogado.id);
+
 
     const produto = this.produtoRepo.create({
       nome: dto.nome,
@@ -52,20 +53,24 @@ export class ProdutoService {
     });
   }
 
-  async findOne(id: string,usuarioLogado: { id: number; perfil: Perfil }) {
+  async findOne(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
     return this.produtoRepo.findOneOrFail({
       where: { id },
       relations: ['categoria'],
     });
-    
-    
+
+
   }
 
   async update(id: string, updateProdutoDto: UpdateProdutoDto, user: any) {
-    await this.produtoValidator.validateProduto(updateProdutoDto, id);
-
     const produto = await this.produtoRepo.findOneBy({ id });
     if (!produto) throw new NotFoundException('Produto nÃ£o encontrado');
+
+    await this.produtoValidator.validateProduto(
+      updateProdutoDto,
+      id,
+      produto.usuarioId,
+    );
 
     if (updateProdutoDto.nome) produto.nome = updateProdutoDto.nome;
     if (updateProdutoDto.preco) produto.preco = updateProdutoDto.preco;
@@ -77,19 +82,19 @@ export class ProdutoService {
   }
 
   async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {
-  const produto = await this.produtoRepo.findOneBy({ id });
-  if (!produto) throw new NotFoundException('Produto não encontrado');
+    const produto = await this.produtoRepo.findOneBy({ id });
+    if (!produto) throw new NotFoundException('Produto nï¿½o encontrado');
 
-  if (usuarioLogado.perfil !== Perfil.ADMIN_MASTER && produto.usuarioId !== usuarioLogado.id) {
-    throw new NotFoundException('Produto não encontrado');
+    if (usuarioLogado.perfil !== Perfil.ADMIN_MASTER && produto.usuarioId !== usuarioLogado.id) {
+      throw new NotFoundException('Produto nï¿½o encontrado');
+    }
+
+    return this.produtoRepo.remove(produto);
   }
 
-  return this.produtoRepo.remove(produto);
-}
-
- async salvarImagem(id: string, imagemUrl: string, user) {
+  async salvarImagem(id: string, imagemUrl: string, user) {
     const produto = await this.produtoRepo.findOneBy({ id });
-    if (!produto) throw new NotFoundException('Produto não encontrado');
+    if (!produto) throw new NotFoundException('Produto nï¿½o encontrado');
 
     produto.imagem = imagemUrl;
     return this.produtoRepo.save(produto);

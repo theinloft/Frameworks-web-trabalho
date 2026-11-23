@@ -17,28 +17,33 @@ export class VerificacaoEmailService {
     );
     const link = `${process.env.FRONTEND_URL}/verificar-email?token=${token}`;
 
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env.BREVO_API_KEY) {
       this.logger.warn(
         `[DEV] Link de confirmação para ${usuario.email}: ${link}`,
       );
       return;
     }
 
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'api-key': process.env.BREVO_API_KEY,
         'Content-Type': 'application/json',
+        accept: 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM,
-        to: usuario.email,
+        sender: {
+          name: 'Shred Labs',
+          email: process.env.EMAIL_FROM,
+        },
+        to: [{ email: usuario.email }],
         subject: 'Confirme seu email - Shred Labs',
-        html: `<p>Clique para confirmar seu email:</p>
+        htmlContent: `<p>Clique para confirmar seu email:</p>
                <p><a href="${link}">Confirmar meu email</a></p>
                <p>O link vale por 24 horas.</p>`,
       }),
     });
+
     if (!res.ok) {
       this.logger.error(`Falha ao enviar email: ${await res.text()}`);
     }

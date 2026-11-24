@@ -1,11 +1,12 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Perfil } from '../usuario/enums/perfil.enum';
@@ -17,7 +18,21 @@ export class ClienteService {
     private readonly clienteRepo: Repository<Cliente>,
   ) { }
 
-  create(dto: CreateClienteDto, usuarioLogado: { id: number }) {
+
+  private tratarDuplicidade(error: unknown): never {
+    if (
+      error instanceof QueryFailedError &&
+      (error as any).driverError?.code === '23505'
+    ) {
+      throw new ConflictException(
+        'Você já tem um cliente com esse e-mail ou documento',
+      );
+    }
+    throw error;
+  }
+
+
+  async create(dto: CreateClienteDto, usuarioLogado: { id: number }) {
     const cliente = this.clienteRepo.create({
       nome: dto.nome,
       email: dto.email,
@@ -25,7 +40,12 @@ export class ClienteService {
       documento: dto.documento?.replace(/\D/g, ''),
       usuarioId: usuarioLogado.id,
     });
-    return this.clienteRepo.save(cliente);
+
+    try {
+      return await this.clienteRepo.save(cliente);
+    } catch (error) {
+      this.tratarDuplicidade(error);
+    }
   }
 
   findAll(usuarioLogado: { id: number; perfil: Perfil }) {
@@ -77,7 +97,11 @@ export class ClienteService {
       ? dto.documento.replace(/\D/g, '')
       : cliente.documento;
 
-    return this.clienteRepo.save(cliente);
+    try {
+      return await this.clienteRepo.save(cliente);
+    } catch (error) {
+      this.tratarDuplicidade(error);
+    }
   }
 
   async remove(id: string, usuarioLogado: { id: number; perfil: Perfil }) {

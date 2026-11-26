@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import styles from './Login.module.css';
-import { API_URL } from '../../config/api';
+import { API_URL,fetchComFallback } from '../../config/api'; 
 
 function Login() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function Login() {
     setCarregando(true);
 
     try {
-      const res = await fetch(`${API_URL}${caminho}`, {
+      const res = await fetchComFallback(`${API_URL}${caminho}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpo),
@@ -68,7 +68,7 @@ function Login() {
     setAviso('');
     setReenviando(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/reenviar-verificacao`, {
+      const res = await fetchComFallback(`${API_URL}/api/auth/reenviar-verificacao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email }),

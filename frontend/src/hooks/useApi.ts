@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { fetchComFallback } from '../config/api';   // novo
 
 export function useApi<T>(url: string) {
   const [data, setData] = useState<T | null>(null);
@@ -6,7 +7,7 @@ export function useApi<T>(url: string) {
 
   const fetchDados = useCallback(() => {
     const token = localStorage.getItem('token');
-    return fetch(url, {
+    return fetchComFallback(url, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
